@@ -69,7 +69,7 @@ describe("Basic action management", function ()
 
         it("Requires actions to be callable", function ()
             assert.has.errors(function ()
-                event:addAction("Not a function")
+                event:addAction(setmetatable({}, {}))
             end)
         end)
 
