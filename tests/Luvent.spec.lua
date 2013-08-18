@@ -58,7 +58,16 @@ describe("Basic action management", function ()
             assert.are.equal(#event.actions, 2)
         end)
 
-        it("Requires actions to be functions", function ()
+        it("Accepts a table with a call() metamethod", function ()
+            local testAction = setmetatable({}, {
+                __call = function (action, ...) end
+            })
+            assert.has_no_errors(function ()
+                event:addAction(testAction)
+            end)
+        end)
+
+        it("Requires actions to be callable", function ()
             assert.has.errors(function ()
                 event:addAction("Not a function")
             end)

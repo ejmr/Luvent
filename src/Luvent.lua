@@ -44,7 +44,7 @@ end
 -- function can accept any number of arguments, but Luvent will
 -- discard all of its return values.  The argument can also be a table
 -- instead of a function, but it must have a metatable implementing
--- the __call() metamethod.
+-- the call() metamethod.
 function Luvent:addAction(newAction)
     if type(newAction) == "table" then
         assert(type(getmetatable(newAction).__call) == "function")
