@@ -26,6 +26,16 @@ Luvent.__index = Luvent
 function Luvent.new(name)
     local event = {}
 
+    --- An event object created by Luvent.
+    --
+    -- @class table
+    -- @name Event
+    --
+    -- @field name A string with the name of the event.
+    --
+    -- @field actions An array containing all actions to execute when
+    -- triggering this event.  An action must be either a function or a
+    -- table that implements the call() metamethod.
     assert(type(name) == "string")
     event.name = name
     event.actions = {}
@@ -35,16 +45,10 @@ end
 
 --- Add an action to an event.
 --
--- Actions are functions.  Triggering an event executes all actions
--- associated with that event.  An event stores its actions as an
--- array of functions.  Adding the same action more than once to the
--- same event has no effect.
+-- It is not possible to add the same action more than once.
 --
--- @param newAction A function to run when triggering this event.  The
--- function can accept any number of arguments, but Luvent will
--- discard all of its return values.  The argument can also be a table
--- instead of a function, but it must have a metatable implementing
--- the call() metamethod.
+-- @param newAction A function or callable table to run when
+-- triggering this event.
 function Luvent:addAction(newAction)
     if type(newAction) == "table" then
         assert(type(getmetatable(newAction).__call) == "function")
@@ -82,14 +86,12 @@ end
 
 --- Remove all actions from an event.
 --
--- Calling this method removes every action from an event.
---
 -- @see Luvent:removeAction
 function Luvent:removeAllActions()
     self.actions = {}
 end
 
---- Checks for the existence of an action.
+--- Check for the existence of an action.
 --
 -- @param actionToFind The action to search for within the event's
 -- list of actions.
@@ -107,8 +109,9 @@ end
 
 --- Trigger an event.
 --
--- This method triggers an event, which in turn executes every action
--- associated with that event.
+-- This method executes every action associated with the event.
+-- Luvent throws away the return values from all actions invoked by
+-- this method.
 --
 -- @param ... All arguments given to this method will be passed along
 -- to every action.
