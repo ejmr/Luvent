@@ -119,4 +119,9 @@ function Luvent:trigger(...)
     end
 end
 
+-- Do not allow external code to modify the metatable of events in
+-- order to improve stability, particularly by preventing bugs caused
+-- by external manipulation of the metatable.
+Luvent.__metatable = Luvent
+
 return Luvent

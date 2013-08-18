@@ -18,6 +18,13 @@ describe("Initialization", function ()
         end)
     end)
 
+    it("Does not allow changing the metatable", function ()
+        local event = Luvent.new("onLoad")
+        assert.has.errors(function ()
+            setmetatable(event, {})
+        end)
+    end)
+
 end)
 
 describe("Basic action management", function ()
