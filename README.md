@@ -24,6 +24,22 @@ Luvent requires one of the following Lua implementations:
 These are the versions we use to test Luvent.  It should work with
 later versions of each, and possibly older versions as well.
 
+### Optional ###
+
+The following programs are not necessary in order to use Luvent but
+you will need them to run the unit tests, generate API documentation,
+and so on.
+
+* [LuaDoc][]
+* [busted][]
+
+
+Documentation
+-------------
+
+Running the command `make docs` will populate the `docs/` directory
+with HTML documents that describe Luvent’s API.
+
 
 Acknowledgments
 ---------------
@@ -47,3 +63,5 @@ Copyright 2013 Eric James Michael Ritz
 [EventLib]: https://github.com/mlnlover11/EventLib
 [Node.js]: http://nodejs.org/
 [LuaJIT]: http://luajit.org/
+[LuaDoc]: http://keplerproject.github.io/luadoc/
+[busted]: http://olivinelabs.com/busted/

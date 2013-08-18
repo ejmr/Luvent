@@ -1,0 +1,2 @@
+# Do not track documentation that LuaDoc creates.
+docs/
