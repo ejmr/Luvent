@@ -96,7 +96,7 @@ end
 --
 -- @return Boolean true if the event uses the action, and false if it
 -- does not.
-function Luvent:usesAction(actionToFind)
+function Luvent:callsAction(actionToFind)
     for _,action in ipairs(self.actions) do
         if action == actionToFind then
             return true
