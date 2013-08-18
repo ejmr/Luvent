@@ -1,8 +1,9 @@
 Luvent: A Simple Event Library for Lua
 ======================================
 
-**Luvent is in early development and not yet recommended for any
-  production software.**
+**Luvent is in early development and not recommended for any
+  production software.  The API is subject to change and break
+  compatibility without warning.**
 
 Luvent is a library for [Lua][], written entirely in Lua, which helps
 support [event-driven programming][EDP].  Luvent lets you create
