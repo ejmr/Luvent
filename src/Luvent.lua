@@ -43,6 +43,20 @@ function Luvent.new(name)
     return setmetatable(event, Luvent)
 end
 
+--- Determine if something is a valid action.
+--
+-- @param action The object we test to see if it is a valid action.
+--
+-- @return Boolean true if the parameter is an action, and boolean
+-- false if it is not.
+local function isValidAction(action)
+    if type(action) == "table" then
+        assert(type(getmetatable(action).__call) == "function")
+    else
+        assert(type(action) == "function")
+    end
+end
+
 --- Add an action to an event.
 --
 -- It is not possible to add the same action more than once.
@@ -50,12 +64,8 @@ end
 -- @param newAction A function or callable table to run when
 -- triggering this event.
 function Luvent:addAction(newAction)
-    if type(newAction) == "table" then
-        assert(type(getmetatable(newAction).__call) == "function")
-    else
-        assert(type(newAction) == "function")
-    end
-
+    if isValidAction(newAction) == false then return end
+    
     for _,action in ipairs(self.actions) do
         if newAction == action then
             return
