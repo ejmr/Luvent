@@ -1,6 +1,6 @@
-.PHONY : docs tests
+.PHONY : docs tests tags
 
-all: docs tests
+all: docs tests tags
 
 # We generate documentation via the LuaDoc tool but the directory
 # where we store the documents may not exist.  This rule creates the
@@ -14,3 +14,7 @@ docs:
 
 tests:
 	busted
+
+# Currently we only create a list of tags suitable for GNU Emacs.
+tags:
+	ctags-exuberant -Re src/Luvent.lua
