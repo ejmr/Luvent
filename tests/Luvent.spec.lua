@@ -30,8 +30,15 @@ end)
 describe("Basic action management", function ()
 
     local event
+
+    -- These are three actions.
     local noop = function () end
     local echo = function (...) print(...) end
+    local sort = setmetatable({}, {
+        __call = function (...)
+            table.sort({ ... })
+        end
+    })
 
     before_each(function ()
         event = Luvent.new("onClick")
@@ -59,11 +66,8 @@ describe("Basic action management", function ()
         end)
 
         it("Accepts a table with a call() metamethod", function ()
-            local testAction = setmetatable({}, {
-                __call = function (action, ...) end
-            })
             assert.has_no_errors(function ()
-                event:addAction(testAction)
+                event:addAction(sort)
             end)
         end)
 
