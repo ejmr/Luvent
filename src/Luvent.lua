@@ -65,13 +65,7 @@ end
 -- triggering this event.
 function Luvent:addAction(newAction)
     if isValidAction(newAction) == false then return end
-    
-    for _,action in ipairs(self.actions) do
-        if newAction == action then
-            return
-        end
-    end
-
+    if self:callsAction(newAction) then return end
     table.insert(self.actions, newAction)
 end
 
