@@ -104,7 +104,9 @@ describe("Basic action management", function ()
 
         it("Can tell if an action exists", function ()
             event:addAction(noop)
+            event:addAction(sort)
             assert.True(event:callsAction(noop))
+            assert.True(event:callsAction(sort))
             assert.False(event:callsAction(echo))
         end)
     
