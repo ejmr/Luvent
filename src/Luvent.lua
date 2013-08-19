@@ -99,11 +99,9 @@ end
 --
 -- @see Luvent:addAction
 function Luvent:removeAction(actionToRemove)
-    for index,action in ipairs(self.actions) do
-        if action == actionToRemove then
-            table.remove(self.actions, index)
-            return
-        end
+    local exists,index = findAction(self, actionToRemove)
+    if exists == true then
+        table.remove(self.actions, index)
     end
 end
 
