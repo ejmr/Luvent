@@ -57,6 +57,25 @@ local function isValidAction(action)
     end
 end
 
+--- Find a specific action associated with an event.
+--
+-- @param event The event in which we search for the action.
+-- @param actionToFind The action to search for.
+--
+-- @return The function always returns two values.  If the event
+-- contains the action then the function returns boolean true and an
+-- integer, the index where that action appears in the event's table
+-- of actions.  If the event does not contain the action then the
+-- function returns boolean false and nil.
+local function findAction(event, actionToFind)
+    for index,action in ipairs(event.actions) do
+        if action == actionToFind then
+            return true, index
+        end
+    end
+    return false, nil
+end
+
 --- Add an action to an event.
 --
 -- It is not possible to add the same action more than once.
@@ -103,12 +122,7 @@ end
 -- @return Boolean true if the event uses the action, and false if it
 -- does not.
 function Luvent:callsAction(actionToFind)
-    for _,action in ipairs(self.actions) do
-        if action == actionToFind then
-            return true
-        end
-    end
-    return false
+    return (findAction(self, actionToFind))
 end
 
 --- Trigger an event.
