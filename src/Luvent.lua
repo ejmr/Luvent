@@ -51,10 +51,13 @@ end
 -- false if it is not.
 local function isValidAction(action)
     if type(action) == "table" then
-        assert(type(getmetatable(action).__call) == "function")
-    else
-        assert(type(action) == "function")
+        if type(getmetatable(action).__call) == "function" then
+            return true
+        end
+    elseif type(action) == "function" then
+        return true
     end
+    return false
 end
 
 --- Find a specific action associated with an event.
@@ -83,7 +86,7 @@ end
 -- @param newAction A function or callable table to run when
 -- triggering this event.
 function Luvent:addAction(newAction)
-    if isValidAction(newAction) == false then return end
+    assert(isValidAction(newAction) == true)
     if self:callsAction(newAction) then return end
     table.insert(self.actions, newAction)
 end
