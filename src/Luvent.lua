@@ -51,7 +51,7 @@ end
 -- false if it is not.
 local function isValidAction(action)
     if type(action) == "table" then
-        if type(getmetatable(action).__call) == "function" then
+        if type(getmetatable(action)["__call"]) == "function" then
             return true
         end
     elseif type(action) == "function" then
