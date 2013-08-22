@@ -43,6 +43,37 @@ function Luvent.new(name)
     return setmetatable(event, Luvent)
 end
 
+--- Compare two events for equality.
+--
+-- Two events are equal if they meet three criteria.  First, they must
+-- have the same 'name' property.  Second, their 'actions' properties
+-- must be tables of the same length.  And finally, their 'actions'
+-- tables must contain the same functions.  The test can be slow
+-- because the comparison has an O(N^2) complexity.
+--
+-- @return A boolean indicating whether or not the events are equal.
+Luvent.__eq = function (e1, e2)
+    if getmetatable(e1) ~= Luvent or getmetatable(e2) ~= Luvent then
+        return false
+    end
+
+    if e1.name ~= e2.name then return false end
+    if #e1.actions ~= #e2.actions then return false end
+
+    for _,a1 in ipairs(e1.actions) do
+        local found = false
+        for _,a2 in ipairs(e2.actions) do
+            if a1 == a2 then
+                found = true
+                break
+            end
+        end
+        if found == false then return false end
+    end
+
+    return true
+end
+
 --- Determine if something is a valid action.
 --
 -- @param action The object we test to see if it is a valid action.

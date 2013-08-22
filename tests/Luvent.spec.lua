@@ -179,3 +179,30 @@ describe("Triggering events", function ()
     end)
 
 end)
+
+describe("Operators", function ()
+
+    it("Can compare two events for equality", function ()
+        local eventOne = Luvent.new("onConnect")
+        local eventTwo = Luvent.new("onConnect")
+        local eventThree = Luvent.new("onConnect")
+        local connections = 0
+        local updateConnectionCount = function ()
+            connections = connections + 1
+        end
+
+        eventOne:addAction(updateConnectionCount)
+        eventTwo:addAction(updateConnectionCount)
+        assert.are.equal(eventOne, eventTwo)
+
+        -- Give eventTwo more actions than eventOne.
+        eventTwo:addAction(function () print "Connected" end)
+        assert.are_not.equal(eventOne, eventTwo)
+
+        -- Give eventThree the same number of actions as eventOne but
+        -- give it a different action.
+        eventThree:addAction(function () print "Connect" end)
+        assert.are_not.equal(eventOne, eventThree)
+    end)
+
+end)
