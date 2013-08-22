@@ -18,9 +18,8 @@ Requirements
 
 Luvent requires one of the following Lua implementations:
 
-* Lua 5.1.5
-* Lua 5.2.2
-* [LuaJIT][] 2.0.2
+* Lua 5.1 or 5.2
+* [LuaJIT][] 2.0
 
 These are the versions we use to test Luvent.  It should work with
 later versions of each, and possibly older versions as well.
@@ -32,7 +31,16 @@ you will need them to run the unit tests, generate API documentation,
 and so on.
 
 * [LuaDoc][]
-* [busted][]
+* [Busted][]
+
+
+Installation
+------------
+
+All you need to do is place `src/Luvent.lua` in a directory that is part of
+`package.path` so that Lua can find and load it.  If you have Busted
+then you should run `make tests` first to ensure that Luvent behaves
+as intended.
 
 
 Documentation
@@ -65,4 +73,4 @@ Copyright 2013 Eric James Michael Ritz
 [Node.js]: http://nodejs.org/
 [LuaJIT]: http://luajit.org/
 [LuaDoc]: http://keplerproject.github.io/luadoc/
-[busted]: http://olivinelabs.com/busted/
+[Busted]: http://olivinelabs.com/busted/
