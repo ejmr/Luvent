@@ -58,6 +58,17 @@ design and implementation of Luvent.  The Luvent API also owes a debt
 of ideas and names to [Node.js][] by Ryan Dahl et al.
 
 
+Future Plans
+------------
+
+A future version of Luvent will support registering [coroutines][]
+with events.  I may also implement support for collecting the return
+values of functions registered with events.  However, neither of these
+are critical features that I need from the first version of Luvent,
+and so I want to take my time thinking about the API of implementation
+of said features.
+
+
 License
 -------
 
@@ -74,3 +85,4 @@ Copyright 2013 Eric James Michael Ritz
 [LuaJIT]: http://luajit.org/
 [LuaDoc]: http://keplerproject.github.io/luadoc/
 [Busted]: http://olivinelabs.com/busted/
+[coroutines]: http://www.lua.org/manual/5.2/manual.html#2.6
