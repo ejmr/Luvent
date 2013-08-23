@@ -23,7 +23,7 @@ Luvent.__index = Luvent
 -- @param name The name of the event.
 --
 -- @return A new event.
-function Luvent.new(name)
+function Luvent.newEvent(name)
     local event = {}
 
     --- An event object created by Luvent.

@@ -4,22 +4,22 @@ describe("Initialization", function ()
 
     it("Creates events with names", function ()
         local name = "onClick"
-        local event = Luvent.new(name)
+        local event = Luvent.newEvent(name)
         assert.are.equal(getmetatable(event), Luvent)
         assert.are.equal(event.name, name)
     end)
 
     it("Requires a name as a string", function ()
         assert.has.errors(function ()
-            local event = Luvent.new()
+            local event = Luvent.newEvent()
         end)
         assert.has.errors(function ()
-            local event = Luvent.new(123)
+            local event = Luvent.newEvent(123)
         end)
     end)
 
     it("Does not allow changing the metatable", function ()
-        local event = Luvent.new("onLoad")
+        local event = Luvent.newEvent("onLoad")
         assert.has.errors(function ()
             setmetatable(event, {})
         end)
@@ -41,7 +41,7 @@ describe("Basic action management", function ()
     })
 
     before_each(function ()
-        event = Luvent.new("onClick")
+        event = Luvent.newEvent("onClick")
     end)
 
     describe("Adding actions", function ()
@@ -131,7 +131,7 @@ describe("Triggering events", function ()
     end)
 
     before_each(function ()
-        onClickEvent = Luvent.new("onClick")
+        onClickEvent = Luvent.newEvent("onClick")
         button = { clickCount = 0, label = "" }
     end)
 
@@ -183,9 +183,9 @@ end)
 describe("Operators", function ()
 
     it("Can compare two events for equality", function ()
-        local eventOne = Luvent.new("onConnect")
-        local eventTwo = Luvent.new("onConnect")
-        local eventThree = Luvent.new("onConnect")
+        local eventOne = Luvent.newEvent("onConnect")
+        local eventTwo = Luvent.newEvent("onConnect")
+        local eventThree = Luvent.newEvent("onConnect")
         local connections = 0
         local updateConnectionCount = function ()
             connections = connections + 1
