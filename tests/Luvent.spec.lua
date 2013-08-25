@@ -206,3 +206,36 @@ describe("Operators", function ()
     end)
 
 end)
+
+describe("Controlling time between actions", function ()
+
+    local event
+    local ticks
+    local bumpTicks
+
+    before_each(function ()
+        event = Luvent.newEvent("eachTick")
+        ticks = 0
+        bumpTicks = function () ticks = ticks + 1 end
+    end)
+
+    it("Calls an action only after so many seconds", function ()
+        local startTime = os.clock()
+        event:addActionWithInterval(bumpTicks, 2)
+        
+        while true do
+            event:trigger()
+            if os.clock() - startTime < 2 then
+                assert.are.equal(ticks, 0)
+            else
+                break
+            end
+        end
+
+        assert.are.equal(ticks, 1)
+    end)
+
+    it("Can mix actions with and without delays", function()
+    end)
+
+end)
