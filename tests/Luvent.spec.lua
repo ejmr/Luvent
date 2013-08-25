@@ -49,7 +49,6 @@ describe("Basic action management", function ()
         it("Can add a single action", function ()
             event:addAction(noop)
             assert.are.equal(#event.actions, 1)
-            assert.are.equal(event.actions[1], noop)
         end)
 
         it("Ignores attempts to add an action more than once", function ()

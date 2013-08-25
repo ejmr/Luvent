@@ -34,8 +34,9 @@ function Luvent.newEvent(name)
     -- @field name A string with the name of the event.
     --
     -- @field actions An array containing all actions to execute when
-    -- triggering this event.  An action must be either a function or a
-    -- table that implements the call() metamethod.
+    -- triggering this event.
+    --
+    -- @see newAction
     assert(type(name) == "string")
     event.name = name
     event.actions = {}
@@ -48,7 +49,7 @@ end
 -- Two events are equal if they meet three criteria.  First, they must
 -- have the same 'name' property.  Second, their 'actions' properties
 -- must be tables of the same length.  And finally, their 'actions'
--- tables must contain the same functions.  The test can be slow
+-- tables must contain the same contents.  The test can be slow
 -- because the comparison has an O(N^2) complexity.
 --
 -- @return A boolean indicating whether or not the events are equal.
@@ -74,21 +75,62 @@ Luvent.__eq = function (e1, e2)
     return true
 end
 
---- Determine if something is a valid action.
+--- The metatable that internally designates actions.
 --
--- @param action The object we test to see if it is a valid action.
+-- @class table
+Luvent.Action = {}
+--Luvent.Action.__index = Luvent.Action
+
+--- Determine if something is a valid action callable.
 --
--- @return Boolean true if the parameter is an action, and boolean
--- false if it is not.
-local function isValidAction(action)
-    if type(action) == "table" then
-        if type(getmetatable(action)["__call"]) == "function" then
+-- Every action must have a 'callable' property which actually
+-- executes the logic for that action.  That property must satisfy
+-- this predicate.
+--
+-- @param callable The object to test.
+--
+-- @return Boolean true if the parameter is a valid callable, and
+-- boolean false if it is not.
+local function isValidActionCallable(callable)
+    if type(callable) == "table" then
+        if type(getmetatable(callable)["__call"]) == "function" then
             return true
+        else
+            return false
         end
-    elseif type(action) == "function" then
+    elseif type(callable) == "function" then
         return true
     end
-    return false
+end
+
+--- Create a new action.
+--
+-- Luvent stores actions as tables, which this function creates.
+-- These tables are private to the library and no part of the public
+-- API ever accepts or returns them.
+--
+-- @param callable The actual logic to execute for this action.
+--
+-- @return The new action.
+local function newAction(callable)
+    local action = {}
+    assert(isValidActionCallable(callable))
+    action.callable = callable
+    return setmetatable(action, Luvent.Action)
+end
+
+--- Compare two actions for equality.
+--
+-- @return A boolean indicating if the actions are equivalent.
+Luvent.Action.__eq = function (a1, a2)
+    if getmetatable(a1) ~= Luvent.Action
+    or getmetatable(a2) ~= Luvent.Action then
+        return false
+    end
+
+    if a1.callable ~= a2.callable then return false end
+
+    return true
 end
 
 --- Find a specific action associated with an event.
@@ -103,7 +145,7 @@ end
 -- function returns boolean false and nil.
 local function findAction(event, actionToFind)
     for index,action in ipairs(event.actions) do
-        if action == actionToFind then
+        if action.callable == actionToFind then
             return true, index
         end
     end
@@ -114,12 +156,14 @@ end
 --
 -- It is not possible to add the same action more than once.
 --
--- @param newAction A function or callable table to run when
+-- @param actionToAdd A function or callable table to run when
 -- triggering this event.
-function Luvent:addAction(newAction)
-    assert(isValidAction(newAction) == true)
-    if self:callsAction(newAction) then return end
-    table.insert(self.actions, newAction)
+--
+-- @see isValidActionCallable
+function Luvent:addAction(actionToAdd)
+    assert(isValidActionCallable(actionToAdd) == true)
+    if self:callsAction(actionToAdd) then return end
+    table.insert(self.actions, newAction(actionToAdd))
 end
 
 --- Remove an action from an event.
@@ -168,13 +212,14 @@ end
 function Luvent:trigger(...)
     local arguments = { ... }
     for _,action in ipairs(self.actions) do
-        action(unpack(arguments))
+        action.callable(unpack(arguments))
     end
 end
 
--- Do not allow external code to modify the metatable of events in
--- order to improve stability, particularly by preventing bugs caused
--- by external manipulation of the metatable.
+-- Do not allow external code to modify the metatable of events and
+-- actions in order to improve stability, particularly by preventing
+-- bugs caused by external manipulation of the metatable.
+Luvent.Action.__metatable = Luvent.Action
 Luvent.__metatable = Luvent
 
 return Luvent
