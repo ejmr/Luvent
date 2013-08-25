@@ -220,18 +220,18 @@ describe("Controlling time between actions", function ()
 
     it("Calls an action only after so many seconds", function ()
         local startTime = os.time()
-        event:addActionWithInterval(bumpTicks, 2)
+        local bump = spy.new(bumpTicks)
+        event:addActionWithInterval(bump, 1)
         
         while true do
             event:trigger()
-            if os.time() - startTime < 2 then
-                assert.are.equal(ticks, 0)
-            else
+            if os.time() - startTime > 3 then
                 break
             end
         end
 
-        assert.are.equal(ticks, 1)
+        assert.are.equal(ticks, 3)
+        assert.spy(bump).was.called(3)
     end)
 
     it("Can mix actions with and without delays", function()
