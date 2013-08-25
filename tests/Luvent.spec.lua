@@ -211,17 +211,17 @@ describe("Controlling time between actions", function ()
     local event
     local ticks
     local bumpTicks
+    local startTime
 
     before_each(function ()
         event = Luvent.newEvent("eachTick")
         ticks = 0
-        bumpTicks = function () ticks = ticks + 1 end
+        bumpTicks = spy.new(function () ticks = ticks + 1 end)
+        startTime = os.time()
     end)
 
     it("Calls an action only after so many seconds", function ()
-        local startTime = os.time()
-        local bump = spy.new(bumpTicks)
-        event:addActionWithInterval(bump, 1)
+        event:addActionWithInterval(bumpTicks, 1)
         
         while true do
             event:trigger()
@@ -231,10 +231,22 @@ describe("Controlling time between actions", function ()
         end
 
         assert.are.equal(ticks, 3)
-        assert.spy(bump).was.called(3)
+        assert.spy(bumpTicks).was.called(3)
     end)
 
     it("Can mix actions with and without delays", function()
+        local switch = false
+        event:addAction(function () switch = true end)
+        event:addActionWithInterval(bumpTicks, 10)
+        assert.are.equal(#event.actions, 2)
+
+        -- We trigger the event but ten seconds will not pass.  So we
+        -- should only see the side-effects of the first action and
+        -- not 'bumpTicks'.
+        event:trigger()
+        assert.is_true(switch)
+        assert.are.equal(ticks, 0)
+        assert.spy(bumpTicks).was_not.called()
     end)
 
 end)
