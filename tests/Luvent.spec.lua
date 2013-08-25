@@ -219,12 +219,12 @@ describe("Controlling time between actions", function ()
     end)
 
     it("Calls an action only after so many seconds", function ()
-        local startTime = os.clock()
+        local startTime = os.time()
         event:addActionWithInterval(bumpTicks, 2)
         
         while true do
             event:trigger()
-            if os.clock() - startTime < 2 then
+            if os.time() - startTime < 2 then
                 assert.are.equal(ticks, 0)
             else
                 break

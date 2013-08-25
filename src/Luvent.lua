@@ -111,11 +111,28 @@ end
 --
 -- @param callable The actual logic to execute for this action.
 --
+-- @param interval The number of seconds to wait between invocations.
+-- By default this value is zero.
+--
 -- @return The new action.
-local function newAction(callable)
+local function newAction(callable, interval)
     local action = {}
+    
     assert(isValidActionCallable(callable))
     action.callable = callable
+    action.interval = interval or 0
+
+    -- If we have a non-zero interval then we need to keep track of
+    -- how often we consider this action for execution.  The property
+    -- below contains the time of when we last called this action, and
+    -- when considering whether or not to call it again we subtract
+    -- the current time from this time and see if it is greater to or
+    -- equal than the interval.  When first creating the action we set
+    -- the property to the current time so that we can start counting
+    -- the clock from the moment we created the action (i.e. now) up
+    -- until the first time the interval elapses.
+    action.timeOfLastInvocation = os.time()
+
     return setmetatable(action, Luvent.Action)
 end
 
@@ -166,6 +183,25 @@ function Luvent:addAction(actionToAdd)
     table.insert(self.actions, newAction(actionToAdd))
 end
 
+--- Add an action that will on an interval.
+--
+-- @param actionToAdd The action to run when triggering the event.
+--
+-- @param interval The number of seconds to wait between invocations
+-- of this action.  Luvent only guarantees that the triggering the
+-- event will not execute this action until this many seconds have
+-- elapsed.  Once the interval elapses the event still must trigger
+-- the action in the same way it does for all actions.  The interval
+-- will not reset until the event invokes the action.
+--
+-- @see Luvent:trigger
+function Luvent:addActionWithInterval(actionToAdd, interval)
+    assert(isValidActionCallable(actionToAdd) == true)
+    assert(type(interval) == "number")
+    if self:callsAction(actionToAdd) then return end
+    table.insert(self.actions, newAction(actionToAdd, interval))
+end
+
 --- Remove an action from an event.
 --
 -- This method accepts an action and disassociates it from the event.
@@ -212,7 +248,14 @@ end
 function Luvent:trigger(...)
     local arguments = { ... }
     for _,action in ipairs(self.actions) do
-        action.callable(unpack(arguments))
+        if action.interval > 0 then
+            if os.difftime(os.time(), action.timeOfLastInvocation) >= action.interval then
+                action.callable(unpack(arguments))
+                action.timeOfLastInvocation = os.time()
+            end
+        else
+            action.callable(unpack(arguments))
+        end
     end
 end
 
