@@ -206,7 +206,7 @@ describe("Operators", function ()
 
 end)
 
-describe("Controlling time between actions", function ()
+describe("Controlling time between actions #delay", function ()
 
     local event
     local ticks
