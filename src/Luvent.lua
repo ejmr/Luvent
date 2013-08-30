@@ -169,6 +169,25 @@ local function findAction(event, actionToFind)
     return false, nil
 end
 
+--- Add a new action to an event.
+--
+-- This function is private to Luvent and exists to factor out the
+-- common logic in the public API for adding actions to events.
+--
+-- @see Luvent:addAction
+-- @see Luvent:addActionWithInterval
+local function addActionToEvent(event, action, interval)
+    local interval = interval or 0
+    
+    assert(isValidActionCallable(action) == true)
+    assert(type(interval) == "number")
+
+    -- We do not allow adding an action more than once to an event.
+    if event:callsAction(action) then return end
+
+    table.insert(event.actions, newAction(action, interval))
+end
+
 --- Add an action to an event.
 --
 -- It is not possible to add the same action more than once.
@@ -178,9 +197,7 @@ end
 --
 -- @see isValidActionCallable
 function Luvent:addAction(actionToAdd)
-    assert(isValidActionCallable(actionToAdd) == true)
-    if self:callsAction(actionToAdd) then return end
-    table.insert(self.actions, newAction(actionToAdd))
+    return addActionToEvent(self, actionToAdd)
 end
 
 --- Add an action that will on an interval.
@@ -196,10 +213,7 @@ end
 --
 -- @see Luvent:trigger
 function Luvent:addActionWithInterval(actionToAdd, interval)
-    assert(isValidActionCallable(actionToAdd) == true)
-    assert(type(interval) == "number")
-    if self:callsAction(actionToAdd) then return end
-    table.insert(self.actions, newAction(actionToAdd, interval))
+    return addActionToEvent(self, actionToAdd, interval)
 end
 
 --- Remove an action from an event.
