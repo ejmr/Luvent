@@ -91,7 +91,7 @@ Luvent.Action.__index = Luvent.Action
 --
 -- @return Boolean true if the parameter is a valid callable, and
 -- boolean false if it is not.
-local function isValidActionCallable(callable)
+local function isActionCallable(callable)
     if type(callable) == "table" then
         if type(getmetatable(callable)["__call"]) == "function" then
             return true
@@ -118,7 +118,7 @@ end
 local function newAction(callable, interval)
     local action = {}
     
-    assert(isValidActionCallable(callable))
+    assert(isActionCallable(callable))
     action.callable = callable
 
     -- This is an ID which we can use later to refer to this action.
@@ -185,7 +185,7 @@ end
 local function addActionToEvent(event, action, interval)
     local interval = interval or 0
     
-    assert(isValidActionCallable(action) == true)
+    assert(isActionCallable(action) == true)
     assert(type(interval) == "number")
 
     -- We do not allow adding an action more than once to an event.
@@ -201,7 +201,7 @@ end
 -- @param actionToAdd A function or callable table to run when
 -- triggering this event.
 --
--- @see isValidActionCallable
+-- @see isActionCallable
 function Luvent:addAction(actionToAdd)
     return addActionToEvent(self, actionToAdd)
 end
