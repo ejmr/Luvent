@@ -9,7 +9,7 @@ all: docs tests tags
 # want to keep.  This rule will delete it.
 docs:
 	if test ! -d "docs/"; then mkdir "docs"; fi
-	luadoc -d "docs/" "src/Luvent.lua"
+	ldoc --dir="docs/" "src/Luvent.lua"
 	if test -f "luadoc.css"; then rm "luadoc.css"; fi
 
 tests:

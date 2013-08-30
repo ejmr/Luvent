@@ -9,9 +9,8 @@
 --
 --]]------------------------------------------------------------------
 
+-- This table represents the entire module.
 local Luvent = {}
-
--- Make sure the library can find the methods for each Luvent object.
 Luvent.__index = Luvent
 
 --- Create a new event.
@@ -76,8 +75,6 @@ Luvent.__eq = function (e1, e2)
 end
 
 --- The metatable that internally designates actions.
---
--- @class table
 Luvent.Action = {}
 Luvent.Action.__index = Luvent.Action
 

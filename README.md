@@ -30,7 +30,7 @@ The following programs are not necessary in order to use Luvent but
 you will need them to run the unit tests, generate API documentation,
 and so on.
 
-* [LuaDoc][]
+* [LDoc][]
 * [Busted][]
 
 
@@ -83,6 +83,6 @@ Copyright 2013 Eric James Michael Ritz
 [EventLib]: https://github.com/mlnlover11/EventLib
 [Node.js]: http://nodejs.org/
 [LuaJIT]: http://luajit.org/
-[LuaDoc]: http://keplerproject.github.io/luadoc/
+[LDoc]: http://stevedonovan.github.io/ldoc/
 [Busted]: http://olivinelabs.com/busted/
 [coroutines]: http://www.lua.org/manual/5.2/manual.html#2.6
