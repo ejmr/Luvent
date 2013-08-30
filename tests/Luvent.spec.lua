@@ -76,6 +76,11 @@ describe("Basic action management", function ()
             end)
         end)
 
+        it("Returns an ID when adding an action", function ()
+            local id = event:addAction(noop)
+            assert.is.string(id)
+        end)
+
     end)
 
     describe("Removing actions", function ()

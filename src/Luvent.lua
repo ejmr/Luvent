@@ -191,7 +191,9 @@ local function addActionToEvent(event, action, interval)
     -- We do not allow adding an action more than once to an event.
     if event:callsAction(action) then return end
 
-    table.insert(event.actions, newAction(action, interval))
+    local new = newAction(action, interval)
+    table.insert(event.actions, new)
+    return new.id
 end
 
 --- Add an action to an event.
@@ -200,6 +202,8 @@ end
 --
 -- @param actionToAdd A function or callable table to run when
 -- triggering this event.
+--
+-- @return The ID of the action in the form of a string.
 --
 -- @see isActionCallable
 function Luvent:addAction(actionToAdd)
@@ -216,6 +220,8 @@ end
 -- elapsed.  Once the interval elapses the event still must trigger
 -- the action in the same way it does for all actions.  The interval
 -- will not reset until the event invokes the action.
+--
+-- @return The ID of the action in the form of a string.
 --
 -- @see Luvent:trigger
 function Luvent:addActionWithInterval(actionToAdd, interval)
