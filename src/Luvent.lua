@@ -120,6 +120,14 @@ local function newAction(callable, interval)
     
     assert(isValidActionCallable(callable))
     action.callable = callable
+
+    -- This is an ID which we can use later to refer to this action.
+    -- For example, we could use this ID to find an action to remove
+    -- when we added that action using an anonymous function, meaning
+    -- we would not be able to use the function itself to find the
+    -- action like normal.
+    action.id = tostring(callable)
+
     action.interval = interval or 0
 
     -- If we have a non-zero interval then we need to keep track of
@@ -138,16 +146,14 @@ end
 
 --- Compare two actions for equality.
 --
--- @return A boolean indicating if the actions are equivalent.
+-- @return A boolean indicating if the two actions share the same ID.
 Luvent.Action.__eq = function (a1, a2)
     if getmetatable(a1) ~= Luvent.Action
     or getmetatable(a2) ~= Luvent.Action then
         return false
     end
 
-    if a1.callable ~= a2.callable then return false end
-
-    return true
+    return a1.id == a2.id
 end
 
 --- Find a specific action associated with an event.
