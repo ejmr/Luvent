@@ -159,7 +159,9 @@ end
 --- Find a specific action associated with an event.
 --
 -- @param event The event in which we search for the action.
--- @param actionToFind The action to search for.
+--
+-- @param actionToFind The action to search for, which can be anything
+-- acceptable as the action argument to the addAction() method.
 --
 -- @return The function always returns two values.  If the event
 -- contains the action then the function returns boolean true and an
@@ -167,11 +169,22 @@ end
 -- of actions.  If the event does not contain the action then the
 -- function returns boolean false and nil.
 local function findAction(event, actionToFind)
+    local key
+
+    if type(actionToFind) == "string" then
+        key = "id"
+    elseif isActionCallable(actionToFind) then
+        key = "callable"
+    else
+        error("Invalid action parameter: " .. actionToFind)
+    end
+
     for index,action in ipairs(event.actions) do
-        if action.callable == actionToFind then
+        if action[key] == actionToFind then
             return true, index
         end
     end
+    
     return false, nil
 end
 
