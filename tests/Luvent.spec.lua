@@ -85,10 +85,17 @@ describe("Basic action management", function ()
             event:addAction(echo)
         end)
 
-        it("Can remove a single action", function ()
+        it("Can remove a single action using a function", function ()
             assert.are.equal(#event.actions, 2)
             event:removeAction(noop)
             assert.are.equal(#event.actions, 1)
+        end)
+
+        it("Can remove a single action using an ID", function ()
+            local id = event:addAction(function () end)
+            assert.are.equal(#event.actions, 3)
+            event:removeAction(id)
+            assert.are.equal(#event.actions, 2)
         end)
 
         it("Can remove all actions", function ()
