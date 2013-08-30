@@ -79,7 +79,7 @@ end
 --
 -- @class table
 Luvent.Action = {}
---Luvent.Action.__index = Luvent.Action
+Luvent.Action.__index = Luvent.Action
 
 --- Determine if something is a valid action callable.
 --
