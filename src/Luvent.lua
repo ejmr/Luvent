@@ -102,11 +102,8 @@ end
 --
 -- @param callable The actual logic to execute for this action.
 --
--- @param interval The number of seconds to wait between invocations.
--- By default this value is zero.
---
 -- @return The new action.
-local function newAction(callable, interval)
+local function newAction(callable)
     local action = {}
     
     assert(isActionCallable(callable))
@@ -118,8 +115,7 @@ local function newAction(callable, interval)
     -- we would not be able to use the function itself to find the
     -- action like normal.
     action.id = tostring(callable)
-
-    action.interval = interval or 0
+    action.interval = 0
 
     -- If we have a non-zero interval then we need to keep track of
     -- how often we consider this action for execution.  The property
@@ -185,17 +181,13 @@ end
 -- common logic in the public API for adding actions to events.
 --
 -- @see Luvent:addAction
--- @see Luvent:addActionWithInterval
-local function addActionToEvent(event, action, interval)
-    local interval = interval or 0
-
+local function addActionToEvent(event, action)
     assert(isActionCallable(action) == true)
-    assert(type(interval) == "number")
 
     -- We do not allow adding an action more than once to an event.
     if event:callsAction(action) then return end
 
-    local new = newAction(action, interval)
+    local new = newAction(action)
     table.insert(event.actions, new)
     return new.id
 end
@@ -212,24 +204,6 @@ end
 -- @see isActionCallable
 function Luvent:addAction(actionToAdd)
     return addActionToEvent(self, actionToAdd)
-end
-
---- Add an action that will on an interval.
---
--- @param actionToAdd The action to run when triggering the event.
---
--- @param interval The number of seconds to wait between invocations
--- of this action.  Luvent only guarantees that the triggering the
--- event will not execute this action until this many seconds have
--- elapsed.  Once the interval elapses the event still must trigger
--- the action in the same way it does for all actions.  The interval
--- will not reset until the event invokes the action.
---
--- @return The ID of the action in the form of a string.
---
--- @see Luvent:trigger
-function Luvent:addActionWithInterval(actionToAdd, interval)
-    return addActionToEvent(self, actionToAdd, interval)
 end
 
 --- Remove an action from an event.
