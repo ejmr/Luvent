@@ -175,23 +175,6 @@ local function findAction(event, actionToFind)
     return false, nil
 end
 
---- Add a new action to an event.
---
--- This function is private to Luvent and exists to factor out the
--- common logic in the public API for adding actions to events.
---
--- @see Luvent:addAction
-local function addActionToEvent(event, action)
-    assert(isActionCallable(action) == true)
-
-    -- We do not allow adding an action more than once to an event.
-    if event:callsAction(action) then return end
-
-    local new = newAction(action)
-    table.insert(event.actions, new)
-    return new.id
-end
-
 --- Add an action to an event.
 --
 -- It is not possible to add the same action more than once.
@@ -203,7 +186,14 @@ end
 --
 -- @see isActionCallable
 function Luvent:addAction(actionToAdd)
-    return addActionToEvent(self, actionToAdd)
+    assert(isActionCallable(actionToAdd) == true)
+
+    -- We do not allow adding an action more than once to an event.
+    if self:callsAction(actionToAdd) then return end
+
+    local new = newAction(actionToAdd)
+    table.insert(self.actions, new)
+    return new.id
 end
 
 --- Remove an action from an event.
