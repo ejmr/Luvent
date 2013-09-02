@@ -222,7 +222,8 @@ describe("Controlling time between actions #delay", function ()
     end)
 
     it("Calls an action only after so many seconds", function ()
-        event:addActionWithInterval(bumpTicks, 1)
+        local id = event:addAction(bumpTicks)
+        event:setActionInterval(1)
         
         while true do
             event:trigger()
@@ -237,8 +238,11 @@ describe("Controlling time between actions #delay", function ()
 
     it("Can mix actions with and without delays", function()
         local switch = false
-        event:addAction(function () switch = true end)
-        event:addActionWithInterval(bumpTicks, 10)
+        local id1 = event:addAction(function () switch = true end)
+        local id2 = event:addAction(bumpTicks)
+
+        event:setActionInterval(id2, 10)
+        
         assert.are.equal(event:getActionCount(), 2)
 
         -- We trigger the event but ten seconds will not pass.  So we
