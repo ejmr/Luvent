@@ -282,4 +282,22 @@ describe("Using coroutines as actions", function ()
         assert.is_false(event:callsAction(id))
     end)
 
+    it("Supports coroutines that yield", function ()
+        local ticks = 0
+        local bump = coroutine.create(function ()
+            while ticks < 10 do
+                ticks = ticks + 1
+                coroutine.yield()
+            end
+        end)
+
+        event:addAction(bump)
+
+        while event:getActionCount() > 0 do
+            event:trigger()
+        end
+
+        assert.are.equal(ticks, 10)
+    end)
+
 end)
