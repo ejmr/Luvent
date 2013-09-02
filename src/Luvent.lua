@@ -184,7 +184,7 @@ end
 -- @see Luvent:addActionWithInterval
 local function addActionToEvent(event, action, interval)
     local interval = interval or 0
-    
+
     assert(isActionCallable(action) == true)
     assert(type(interval) == "number")
 

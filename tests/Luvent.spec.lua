@@ -251,3 +251,21 @@ describe("Controlling time between actions #delay", function ()
     end)
 
 end)
+
+describe("Using coroutines as actions", function ()
+
+    local event
+    local noop
+
+    before_each(function ()
+        event = Luvent.newEvent()
+        noop = coroutine.create(function () end)
+    end)
+
+    it("Accepts coroutines as actions", function ()
+        event:addAction(noop)
+        assert.are.equal(event:getActionCount(), 1)
+        assert.is_true(event:callsAction(noop))
+    end)
+
+end)
