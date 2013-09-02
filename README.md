@@ -47,7 +47,99 @@ Documentation
 -------------
 
 Running the command `make docs` will populate the `docs/` directory
-with HTML documents that describe Luvent’s API.
+with HTML documents that describe Luvent’s API.  The public API
+consists of the following functions and methods:
+
+* `Luvent.newEvent(name)`
+* `Luvent:addAction(action)`
+* `Luvent:addActionWithInterval(action, time)`
+* `Luvent:removeAction(action_or_id)`
+* `Luvent:getActionCount()`
+* `Luvent:callsAction(action)`
+* `Luvent:trigger(...)`
+
+The parameter `action` can either be a function or a table that
+implements the `__call()` metamethod.  Below is a lengthy example that
+demonstrates the basics of creating and triggering events, and adding
+and removing actions.
+
+```lua
+-- In this example we will pretend we are implementing a module in a
+-- game that creates and manages enemies.  To simplfy the example we
+-- use Enrique García Cota's terrific MiddleClass library in order
+-- to make the class and objects for enemies.
+--
+--     https://github.com/kikito/middleclass
+--
+require "middleclass"
+
+local Luvent = require "Luvent"
+local Enemy = class("Enemy")
+
+-- This hash contains a reference to all living enemies.
+Enemy.static.LIVING = {}
+
+function Enemy:initialize(family, maxHP)
+    self.family = family
+    self.maxHP = maxHP
+    self.HP = maxHP
+    table.insert(Enemy.LIVING, self)
+end
+
+-- This is the event we trigger any time an enemy dies.
+Enemy.static.onDie = Luvent.newEvent("onDie")
+
+-- This method applies damage to an enemy and will trigger its 'onDie'
+-- event if the enemy's hit points reach zero or less.
+function Enemy:damage(damage)
+    self.HP = self.HP - damage
+    if self.HP <= 0 then
+        Enemy.onDie:trigger(self)
+    end
+end
+
+-- Now we can start associating actions with the 'onDie' event.  First
+-- we start by removing the enemy from the table of living enemies.
+Enemy.onDie:addAction(
+    function (enemy)
+        for index,living_enemy in ipairs(Enemy.LIVING) do
+            if enemy == living_enemy then
+                table.remove(Enemy.LIVING, index)
+                return
+            end
+        end
+    end)
+
+-- For debugging we want to see on the console when an enemy dies, so
+-- we add that as a separate action.  This time we save the return
+-- value of addAction() so that later we can use that to remove the
+-- action when we want to stop printing debugging output.
+local debugAction = Enemy.onDie:addAction(
+    function (enemy)
+        print(string.format("Enemy %s died", enemy.family))
+    end)
+
+-- Now we make some enemies and kill them to demonstrate how the
+-- trigger() method used in Enemy:damage() invokes the actions.
+
+local bee = Enemy:new("Bee", 10)
+local ladybug = Enemy:new("Ladybug", 1)
+
+-- This will print "2"
+print(#Enemy.LIVING)
+
+-- This kills the enemy so the program invokes the two actions above,
+-- meaning it will print "Enemy Ladbug died" to the console and will
+-- remove it from Enemy.LIVING.
+ladybug:damage(100)
+print(#Enemy.LIVING)
+
+-- Now we turn off the debugging output by removing that action.  As a
+-- result we will see no output after killing the bee.
+Enemy.onDie:removeAction(debugAction)
+bee:damage(50)
+print(#Enemy.LIVING)
+```
 
 
 Acknowledgments
