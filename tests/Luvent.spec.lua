@@ -48,20 +48,20 @@ describe("Basic action management", function ()
 
         it("Can add a single action", function ()
             event:addAction(noop)
-            assert.are.equal(#event.actions, 1)
+            assert.are.equal(event:getActionCount(), 1)
         end)
 
         it("Ignores attempts to add an action more than once", function ()
             event:addAction(noop)
             event:addAction(noop)
             event:addAction(noop)
-            assert.are.equal(#event.actions, 1)
+            assert.are.equal(event:getActionCount(), 1)
         end)
 
         it("Accepts multiple actions", function ()
             event:addAction(noop)
             event:addAction(echo)
-            assert.are.equal(#event.actions, 2)
+            assert.are.equal(event:getActionCount(), 2)
         end)
 
         it("Accepts a table with a call() metamethod", function ()
@@ -91,22 +91,22 @@ describe("Basic action management", function ()
         end)
 
         it("Can remove a single action using a function", function ()
-            assert.are.equal(#event.actions, 2)
+            assert.are.equal(event:getActionCount(), 2)
             event:removeAction(noop)
-            assert.are.equal(#event.actions, 1)
+            assert.are.equal(event:getActionCount(), 1)
         end)
 
         it("Can remove a single action using an ID", function ()
             local id = event:addAction(function () end)
-            assert.are.equal(#event.actions, 3)
+            assert.are.equal(event:getActionCount(), 3)
             event:removeAction(id)
-            assert.are.equal(#event.actions, 2)
+            assert.are.equal(event:getActionCount(), 2)
         end)
 
         it("Can remove all actions", function ()
-            assert.are.equal(#event.actions, 2)
+            assert.are.equal(event:getActionCount(), 2)
             event:removeAllActions()
-            assert.are.equal(#event.actions, 0)
+            assert.are.equal(event:getActionCount(), 0)
         end)
         
     end)
@@ -250,7 +250,7 @@ describe("Controlling time between actions #delay", function ()
         local switch = false
         event:addAction(function () switch = true end)
         event:addActionWithInterval(bumpTicks, 10)
-        assert.are.equal(#event.actions, 2)
+        assert.are.equal(event:getActionCount(), 2)
 
         -- We trigger the event but ten seconds will not pass.  So we
         -- should only see the side-effects of the first action and

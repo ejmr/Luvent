@@ -262,6 +262,16 @@ function Luvent:removeAllActions()
     self.actions = {}
 end
 
+--- Return the number of actions associated with an event.
+--
+-- @return An integer representing the number of actions.  Note that
+-- because actions can run on delays this number does not indicate how
+-- many actions the event will execute when we trigger it.  The number
+-- only tells us the total number of actions bound to the event.
+function Luvent:getActionCount()
+    return #self.actions
+end
+
 --- Check for the existence of an action.
 --
 -- @param actionToFind The action to search for within the event's
