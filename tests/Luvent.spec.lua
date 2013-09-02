@@ -223,13 +223,10 @@ describe("Controlling time between actions #delay", function ()
 
     it("Calls an action only after so many seconds", function ()
         local id = event:addAction(bumpTicks)
-        event:setActionInterval(1)
+        event:setActionInterval(id, 1)
         
-        while true do
+        while (os.time() - startTime) < 3 do
             event:trigger()
-            if os.time() - startTime > 3 then
-                break
-            end
         end
 
         assert.are.equal(ticks, 3)

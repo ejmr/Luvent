@@ -163,7 +163,7 @@ local function findAction(event, actionToFind)
     elseif isActionCallable(actionToFind) then
         key = "callable"
     else
-        error("Invalid action parameter: " .. actionToFind)
+        error("Invalid action parameter: " .. tostring(actionToFind))
     end
 
     for index,action in ipairs(event.actions) do
@@ -302,6 +302,25 @@ function Luvent:trigger(...)
             call(action, ...)
         end
     end
+end
+
+--- Modify the interval of an action
+--
+-- This method lets us change an action to adhere to an interval, i.e.
+-- the number of seconds that must pass before the event will invoke
+-- the action again.  The method also lets us set the interval to zero
+-- so that the event will invoke the action regardless of time.
+--
+-- @param actionToFind The action to modify.  This must either be
+-- something acceptable to Luvent:addAction() or it must be the ID
+-- that Luvent:addAction() returns for each action.  It is an error to
+-- call this method on an action that does is not part of the event.
+--
+-- @param interval An integer representing the new interval.
+function Luvent:setActionInterval(actionToFind, interval)
+    local exists,index = findAction(self, actionToFind)
+    assert(exists)
+    self.actions[index].interval = interval
 end
 
 -- Do not allow external code to modify the metatable of events and
