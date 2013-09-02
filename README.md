@@ -62,7 +62,7 @@ consists of the following functions and methods:
   values of `Luvent:newEvent()`.  Its non-method properties are not
   part of the public API.
 
-The parameter `action` can either be a function or a table that
+The parameter `action` must be a function, coroutine, or table that
 implements the `__call()` metamethod.  Below is a lengthy example that
 demonstrates the basics of creating and triggering events, and adding
 and removing actions.
