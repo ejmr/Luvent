@@ -268,4 +268,18 @@ describe("Using coroutines as actions", function ()
         assert.is_true(event:callsAction(noop))
     end)
 
+    it("Creates an ID to remove a coroutine", function ()
+        local id = event:addAction(noop)
+        assert.are.equal(event:getActionCount(), 1)
+        event:removeAction(id)
+        assert.are.equal(event:getActionCount(), 0)
+    end)
+
+    it("Automatically removes dead coroutines", function ()
+        local id = event:addAction(noop)
+        event:trigger()
+        assert.are.equal(event:getActionCount(), 0)
+        assert.is_false(event:callsAction(id))
+    end)
+
 end)
