@@ -277,6 +277,31 @@ function Luvent:callsAction(actionToFind)
     return (findAction(self, actionToFind))
 end
 
+--- Invoke an action.
+--
+-- This is the internal mechanism for running actions when we trigger
+-- an event.  It takes care to invoke actions in the correct way based
+-- on their base type, e.g. actions that are coroutines.
+--
+-- @param action The action to invoke.
+--
+-- @param ... Any additional arguments to give to the action.
+--
+-- @return Boolean true if we can invoke this action again at a later
+-- time and false if we cannot (e.g. if it is a dead coroutine).
+local function invokeAction(action, ...)
+    if type(action.callable) == "thread" then
+        coroutine.resume(action.callable, ...)
+        if coroutine.status(action.callable) == "dead" then
+            return false
+        end
+    else
+        action.callable(...)
+    end
+
+    return true
+end
+
 --- Trigger an event.
 --
 -- This method executes every action associated with the event.
@@ -286,15 +311,21 @@ end
 -- @param ... All arguments given to this method will be passed along
 -- to every action.
 function Luvent:trigger(...)
-    local arguments = { ... }
+    local call = function (action, ...)
+        local keep = invokeAction(action, ...)
+        if keep == false then
+            self:removeAction(action.id)
+        end
+    end
+        
     for _,action in ipairs(self.actions) do
         if action.interval > 0 then
             if os.difftime(os.time(), action.timeOfLastInvocation) >= action.interval then
-                action.callable(unpack(arguments))
+                call(action, ...)
                 action.timeOfLastInvocation = os.time()
             end
         else
-            action.callable(unpack(arguments))
+            call(action, ...)
         end
     end
 end
