@@ -2,24 +2,13 @@ local Luvent = require "Luvent"
 
 describe("Initialization", function ()
 
-    it("Creates events with names", function ()
-        local name = "onClick"
-        local event = Luvent.newEvent(name)
+    it("Creates events", function ()
+        local event = Luvent.newEvent()
         assert.are.equal(getmetatable(event), Luvent)
-        assert.are.equal(event.name, name)
-    end)
-
-    it("Requires a name as a string", function ()
-        assert.has.errors(function ()
-            local event = Luvent.newEvent()
-        end)
-        assert.has.errors(function ()
-            local event = Luvent.newEvent(123)
-        end)
     end)
 
     it("Does not allow changing the metatable", function ()
-        local event = Luvent.newEvent("onLoad")
+        local event = Luvent.newEvent()
         assert.has.errors(function ()
             setmetatable(event, {})
         end)
@@ -41,7 +30,7 @@ describe("Basic action management", function ()
     })
 
     before_each(function ()
-        event = Luvent.newEvent("onClick")
+        event = Luvent.newEvent()
     end)
 
     describe("Adding actions", function ()
@@ -142,7 +131,7 @@ describe("Triggering events", function ()
     end)
 
     before_each(function ()
-        onClickEvent = Luvent.newEvent("onClick")
+        onClickEvent = Luvent.newEvent()
         button = { clickCount = 0, label = "" }
     end)
 
@@ -194,9 +183,9 @@ end)
 describe("Operators", function ()
 
     it("Can compare two events for equality", function ()
-        local eventOne = Luvent.newEvent("onConnect")
-        local eventTwo = Luvent.newEvent("onConnect")
-        local eventThree = Luvent.newEvent("onConnect")
+        local eventOne = Luvent.newEvent()
+        local eventTwo = Luvent.newEvent()
+        local eventThree = Luvent.newEvent()
         local connections = 0
         local updateConnectionCount = function ()
             connections = connections + 1
@@ -226,7 +215,7 @@ describe("Controlling time between actions #delay", function ()
     local startTime
 
     before_each(function ()
-        event = Luvent.newEvent("eachTick")
+        event = Luvent.newEvent()
         ticks = 0
         bumpTicks = spy.new(function () ticks = ticks + 1 end)
         startTime = os.time()

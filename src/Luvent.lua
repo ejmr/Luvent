@@ -16,13 +16,9 @@ Luvent.__index = Luvent
 --- Create a new event.
 --
 -- This is the constructor for creating events, i.e. Luvent objects.
--- The new event will have the name given to the constructor and will
--- use the 'Luvent' table for its metatable.
---
--- @param name The name of the event.
 --
 -- @return A new event.
-function Luvent.newEvent(name)
+function Luvent.newEvent()
     local event = {}
 
     --- An event object created by Luvent.
@@ -30,14 +26,10 @@ function Luvent.newEvent(name)
     -- @class table
     -- @name Event
     --
-    -- @field name A string with the name of the event.
-    --
     -- @field actions An array containing all actions to execute when
     -- triggering this event.
     --
     -- @see newAction
-    assert(type(name) == "string")
-    event.name = name
     event.actions = {}
     
     return setmetatable(event, Luvent)
@@ -45,11 +37,10 @@ end
 
 --- Compare two events for equality.
 --
--- Two events are equal if they meet three criteria.  First, they must
--- have the same 'name' property.  Second, their 'actions' properties
--- must be tables of the same length.  And finally, their 'actions'
--- tables must contain the same contents.  The test can be slow
--- because the comparison has an O(N^2) complexity.
+-- Two events are equal if they meet three criteria.  First, their
+-- 'actions' properties must be tables of the same length.  And
+-- second, their 'actions' tables must contain the same contents.  The
+-- test can be slow because the comparison has an O(N^2) complexity.
 --
 -- @return A boolean indicating whether or not the events are equal.
 Luvent.__eq = function (e1, e2)
@@ -57,7 +48,6 @@ Luvent.__eq = function (e1, e2)
         return false
     end
 
-    if e1.name ~= e2.name then return false end
     if #e1.actions ~= #e2.actions then return false end
 
     for _,a1 in ipairs(e1.actions) do

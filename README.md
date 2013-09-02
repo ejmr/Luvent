@@ -50,7 +50,7 @@ Running the command `make docs` will populate the `docs/` directory
 with HTML documents that describe Luvent’s API.  The public API
 consists of the following functions and methods:
 
-* `Luvent.newEvent(name)`
+* `Luvent.newEvent()`
 * `Luvent:addAction(action)`
 * `Luvent:addActionWithInterval(action, time)`
 * `Luvent:removeAction(action_or_id)`
@@ -87,7 +87,7 @@ function Enemy:initialize(family, maxHP)
 end
 
 -- This is the event we trigger any time an enemy dies.
-Enemy.static.onDie = Luvent.newEvent("onDie")
+Enemy.static.onDie = Luvent.newEvent()
 
 -- This method applies damage to an enemy and will trigger its 'onDie'
 -- event if the enemy's hit points reach zero or less.
