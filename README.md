@@ -10,7 +10,7 @@ support [event-driven programming][EDP].  Luvent lets you create
 events, which are objects with any number of associated functions.
 Whenever you trigger an event the library will execute all functions
 attached to that event.  You may trigger an event multiple times and
-can provide different arguments that event’s functions each time.
+can provide different arguments to that event’s functions each time.
 
 
 Requirements
