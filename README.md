@@ -58,6 +58,10 @@ consists of the following functions and methods:
 * `Luvent:callsAction(action)`
 * `Luvent:trigger(...)`
 
+**Note:** Developers must never rely on the properties of the return
+  values of `Luvent:newEvent()`.  Its non-method properties are not
+  part of the public API.
+
 The parameter `action` can either be a function or a table that
 implements the `__call()` metamethod.  Below is a lengthy example that
 demonstrates the basics of creating and triggering events, and adding
