@@ -82,12 +82,16 @@ local function isActionCallable(callable)
     if type(callable) == "table" then
         if type(getmetatable(callable)["__call"]) == "function" then
             return true
-        else
-            return false
         end
     elseif type(callable) == "function" then
         return true
+    elseif type(callable) == "thread" then
+        if coroutine.status(callable) ~= "dead" then
+            return true
+        end
     end
+
+    return false
 end
 
 --- Create a new action.
