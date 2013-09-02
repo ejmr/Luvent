@@ -146,12 +146,21 @@ print(#Enemy.LIVING)
 ```
 
 
-Acknowledgments
----------------
+Acknowledgments and Alternatives
+--------------------------------
 
 [EventLib][] by Elijah Frederickson is the major inspiration for the
 design and implementation of Luvent.  The Luvent API also owes a debt
-of ideas and names to [Node.js][] by Ryan Dahl et al.
+of ideas and names to [Node.js][] by Ryan Dahl et al.  The following
+is a list of alternatives to Luvent for the sake of comparison, as
+some may be better suited for some developers or projects:
+
+* [Custom Event Support](https://github.com/benbeltran/custom_event_support.lua) by Ben Beltran
+* [Emitter](https://github.com/friesencr/lua_emitter) by Chris Friesen
+* [Lua-Event](https://github.com/slime73/Lua-Event) by Alex Szpakowski
+* [Lua-Events](https://github.com/syntruth/Lua-Events) by syntruth
+* [Lua-Events](https://github.com/wscherphof/lua-events) by Wouter Scherphof
+* [events.lua](https://github.com/mvader/events.lua) by José Miguel Molina
 
 
 Future Plans
