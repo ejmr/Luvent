@@ -145,6 +145,69 @@ bee:damage(50)
 print(#Enemy.LIVING)
 ```
 
+You can also use [coroutines][] as actions.  This allows you to do
+things that you could not with regular functions, such as make sure
+that an event will invoke an action a fixed number of times, e.g.:
+
+```lua
+-- In this example we are writing code that affects a player in a
+-- hypothetical game.  Every time the player dies and uses a continue
+-- we want to reset the player's properties.  However, the first time
+-- the player uses a continue we want to save the current score, and
+-- then we do not execute that action again because our game only
+-- records scores the player achieves with the first continue.
+
+require "middleclass"
+
+local Luvent = require "Luvent"
+local Player = class("Player")
+
+Player.static.MAX_POWER_LEVEL = 10
+
+function Player:initialize()
+    self.HP = 100
+    self.powerLevel = Player.MAX_POWER_LEVEL
+    self.score = 0
+end
+
+function Player:continue()
+    Player.onContinue:trigger(self)
+end
+
+Player.static.onContinue = Luvent.newEvent()
+
+-- If we use a coroutine for an action then Luvent will automatically
+-- remove the action when the coroutine is dead.  That means the
+-- action below will only run once because the status of the coroutine
+-- becomes dead after its first invocation.
+Player.onContinue:addAction(
+    coroutine.create(
+        function (player)
+            -- This is where we would write 'player.score' to a file.
+        end))
+
+-- This is the stuff we want to do every time the player continues.
+Player.onContinue:addAction(
+    function (player)
+        player.HP = 100
+        player.powerlevel = 1
+        player.score = 0
+    end)
+
+local P1 = Player:new()
+
+-- The first time we trigger this event it will execute both of the
+-- actions above.
+P1:continue()
+
+-- But now any other time we trigger the event it will not run the
+-- action that saves the score.
+P1:continue()
+```
+
+Luvent discards all return values from action functions or anything
+that coroutines yield.
+
 
 Acknowledgments and Alternatives
 --------------------------------
@@ -161,17 +224,6 @@ some may be better suited for some developers or projects:
 * [Lua-Events](https://github.com/syntruth/Lua-Events) by syntruth
 * [Lua-Events](https://github.com/wscherphof/lua-events) by Wouter Scherphof
 * [events.lua](https://github.com/mvader/events.lua) by José Miguel Molina
-
-
-Future Plans
-------------
-
-A future version of Luvent will support registering [coroutines][]
-with events.  I may also implement support for collecting the return
-values of functions registered with events.  However, neither of these
-are critical features that I need from the first version of Luvent,
-and so I want to take my time thinking about the API of implementation
-of said features.
 
 
 License
