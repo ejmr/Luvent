@@ -37,7 +37,7 @@ end
 
 --- Compare two events for equality.
 --
--- Two events are equal if they meet three criteria.  First, their
+-- Two events are equal if they meet two criteria.  First, their
 -- 'actions' properties must be tables of the same length.  And
 -- second, their 'actions' tables must contain the same contents.  The
 -- test can be slow because the comparison has an O(N^2) complexity.
