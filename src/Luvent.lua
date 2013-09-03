@@ -115,17 +115,22 @@ local function newAction(callable)
     -- we would not be able to use the function itself to find the
     -- action like normal.
     action.id = tostring(callable)
-    action.interval = 0
+
+    -- This boolean indicates whether or not the action is enabled.
+    -- Events will never invoke disable actions.  This flag makes it
+    -- possible to disable an action without removing it.
+    action.enabled = true
 
     -- If we have a non-zero interval then we need to keep track of
-    -- how often we consider this action for execution.  The property
-    -- below contains the time of when we last called this action, and
-    -- when considering whether or not to call it again we subtract
-    -- the current time from this time and see if it is greater to or
-    -- equal than the interval.  When first creating the action we set
-    -- the property to the current time so that we can start counting
-    -- the clock from the moment we created the action (i.e. now) up
-    -- until the first time the interval elapses.
+    -- how often we consider this action for execution.  The
+    -- properties below help track the time of when we last called
+    -- this action, and when considering whether or not to call it
+    -- again we subtract the current time from this time and see if it
+    -- is greater to or equal than the interval.  When first creating
+    -- the action we set the property to the current time so that we
+    -- can start counting the clock from the moment we created the
+    -- action (i.e. now) up until the first time the interval elapses.
+    action.interval = 0
     action.timeOfLastInvocation = os.time()
 
     return setmetatable(action, Luvent.Action)
@@ -254,6 +259,10 @@ end
 -- @return Boolean true if we can invoke this action again at a later
 -- time and false if we cannot (e.g. if it is a dead coroutine).
 local function invokeAction(action, ...)
+    if action.enabled == false then
+        return true
+    end
+
     if type(action.callable) == "thread" then
         coroutine.resume(action.callable, ...)
         if coroutine.status(action.callable) == "dead" then
