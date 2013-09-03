@@ -112,6 +112,29 @@ describe("Basic action management", function ()
     
     end)
 
+    describe("Disabling and re-enabling actions", function ()
+
+        it("Does not invoke disabled actions", function ()
+            local echo = spy.new(echo)
+            local noop = spy.new(noop)
+
+            event:addAction(echo)
+            event:addAction(noop)
+            event:disableAction(echo)
+            event:trigger()
+
+            assert.spy(echo).was_not_called()
+            assert.spy(noop).was_called(1)
+
+            event:enableAction(echo)
+            event:trigger()
+
+            assert.spy(echo).was_called(1)
+            assert.spy(noop).was_called(2)
+        end)
+
+    end)
+
 end)
 
 describe("Triggering events", function ()
