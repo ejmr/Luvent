@@ -187,7 +187,7 @@ end
 -- @param actionToAdd A function or callable table to run when
 -- triggering this event.
 --
--- @return The ID of the action in the form of a string.
+-- @return The ID of the action.
 --
 -- @see isActionCallable
 function Luvent:addAction(actionToAdd)
