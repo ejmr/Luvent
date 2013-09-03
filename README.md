@@ -55,7 +55,7 @@ consists of the following functions and methods:
 * `Luvent:setActionInterval(action_or_id, interval)`
 * `Luvent:removeAction(action_or_id)`
 * `Luvent:getActionCount()`
-* `Luvent:callsAction(action_or_id)`
+* `Luvent:hasAction(action_or_id)`
 * `Luvent:disableAction(action_or_id)`
 * `Luvent:enableAction(action_or_id)`
 * `Luvent:trigger(...)`

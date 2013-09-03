@@ -194,7 +194,7 @@ function Luvent:addAction(actionToAdd)
     assert(isActionCallable(actionToAdd) == true)
 
     -- We do not allow adding an action more than once to an event.
-    if self:callsAction(actionToAdd) then return end
+    if self:hasAction(actionToAdd) then return end
 
     local new = newAction(actionToAdd)
     table.insert(self.actions, new)
@@ -242,7 +242,7 @@ end
 --
 -- @return Boolean true if the event uses the action, and false if it
 -- does not.
-function Luvent:callsAction(actionToFind)
+function Luvent:hasAction(actionToFind)
     return (findAction(self, actionToFind))
 end
 
