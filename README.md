@@ -69,7 +69,15 @@ implements the `__call()` metamethod.  The `addAction()` method
 returns an ID for the new action which you can save and later pass on
 to any method that accepts `action_or_id`.  This is useful for keeping
 track of actions when you have no access to the original action
-itself, e.g. adding an anonymous function as an action.
+itself, e.g. adding an anonymous function as an action.  The Luvent
+API only guarantees the following attributes regarding action IDs:
+
+1. An action ID is true in a boolean context.
+
+2. If two action IDs are equal then they represent the same action.
+
+Code that relies on anything else about action IDs, e.g. their type or
+their specific values, may break in the future without warning.
 
 Below is a lengthy example that demonstrates the basics of creating
 and triggering events, and adding and removing actions.
