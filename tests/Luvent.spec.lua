@@ -133,6 +133,18 @@ describe("Basic action management", function ()
             assert.spy(noop).was_called(2)
         end)
 
+        it("Does not remove disabled actions", function ()
+            event:addAction(noop)
+            event:addAction(echo)
+            assert.are.equal(event:getActionCount(), 2)
+            
+            event:disableAction(noop)
+            assert.are.equal(event:getActionCount(), 2)
+            
+            event:enableAction(noop)
+            assert.are.equal(event:getActionCount(), 2)
+        end)
+
     end)
 
 end)
