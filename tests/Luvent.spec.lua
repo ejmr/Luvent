@@ -67,7 +67,15 @@ describe("Basic action management", function ()
 
         it("Returns an ID when adding an action", function ()
             local id = event:addAction(noop)
-            assert.is.string(id)
+            assert.is.truthy(id)
+        end)
+
+        it("Returns the same ID for events sharing an action", function ()
+            local event2 = Luvent.newEvent()
+            local id1 = event:addAction(noop)
+            local id2 = event2:addAction(noop)
+
+            assert.are.equal(id1, id2)
         end)
 
     end)
