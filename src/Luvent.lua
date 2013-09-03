@@ -322,6 +322,38 @@ function Luvent:setActionInterval(actionToFind, interval)
     self.actions[index].interval = interval
 end
 
+--- Enable an action.
+--
+-- This method enables an action so that triggering the event will
+-- call the action.  Luvent enables all actions by default, so this
+-- method is meant primarily for re-enabling disabled actions.
+--
+-- @param actionToFind The action to enable.  This must either be an
+-- action ID or something acceptable to the Luvent:addAction() method.
+--
+-- @see Luvent:disableAction
+function Luvent:enableAction(actionToFind)
+    local exists,index = findAction(self, actionToFind)
+    assert(exists)
+    self.actions[index].enabled = true
+end
+
+--- Disable an action.
+--
+-- This method disables an action so that triggering the event will
+-- not invoke the action.  This allows us to temporarily stop using an
+-- action without removing it from the event.
+--
+-- @param actionToFind The action to disable.  This must either be an
+-- action ID or something acceptable to the Luvent:addAction() method.
+--
+-- @see Luvent:enableAction
+function Luvent:disableAction(actionToFind)
+    local exists,index = findAction(self, actionToFind)
+    assert(exists)
+    self.actions[index].enabled = false
+end
+
 -- Do not allow external code to modify the metatable of events and
 -- actions in order to improve stability, particularly by preventing
 -- bugs caused by external manipulation of the metatable.
