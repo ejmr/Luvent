@@ -56,6 +56,8 @@ consists of the following functions and methods:
 * `Luvent:removeAction(action_or_id)`
 * `Luvent:getActionCount()`
 * `Luvent:callsAction(action_or_id)`
+* `Luvent:disableAction(action_or_id)`
+* `Luvent:enableAction(action_or_id)`
 * `Luvent:trigger(...)`
 
 **Note:** Developers must never rely on the properties of the return
