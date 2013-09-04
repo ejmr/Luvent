@@ -151,13 +151,13 @@ print(#Enemy.LIVING)
 -- meaning it will print "Enemy Ladbug died" to the console and will
 -- remove it from Enemy.LIVING.
 ladybug:damage(100)
-print(#Enemy.LIVING)
+print(#Enemy.LIVING)    -- Prints "1"
 
 -- Now we turn off the debugging output by removing that action.  As a
 -- result we will see no output after killing the bee.
 Enemy.onDie:removeAction(debugAction)
 bee:damage(50)
-print(#Enemy.LIVING)
+print(#Enemy.LIVING)    -- Prints "0"
 ```
 
 You can also use [coroutines][] as actions.  This allows you to do
