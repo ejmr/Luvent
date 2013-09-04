@@ -121,6 +121,22 @@ local function newAction(callable)
     -- possible to disable an action without removing it.
     action.enabled = true
 
+    -- This property represents the number of times events can invoke
+    -- this action.  If the value is a non-negative number then Luvent
+    -- will disable the action after trigger() invokes the action that
+    -- many times.  If the value is a negative number then Luvent will
+    -- always invoke the action when triggering events.  We use a
+    -- negative number as a sentinel value because the public API does
+    -- not accept negative limit values.
+    --
+    -- @see Luvent:setActionTriggerLimit
+    action.limit = -1
+
+    -- This property keeps track of how many times events have invoked
+    -- this action.  We reset this to zero whenever we change the
+    -- 'limit' property.
+    action.numberOfInvocations = 0
+
     -- If we have a non-zero interval then we need to keep track of
     -- how often we consider this action for execution.  The
     -- properties below help track the time of when we last called
@@ -257,7 +273,10 @@ end
 -- @param ... Any additional arguments to give to the action.
 --
 -- @return Boolean true if we can invoke this action again at a later
--- time and false if we cannot (e.g. if it is a dead coroutine).
+-- time and false if we cannot, e.g. if it is a dead coroutine, in
+-- which case we remove the action.
+--
+-- @see Luvent:setActionTriggerLimit
 local function invokeAction(action, ...)
     if action.enabled == false then
         return true
@@ -270,6 +289,13 @@ local function invokeAction(action, ...)
         end
     else
         action.callable(...)
+    end
+
+    action.numberOfInvocations = action.numberOfInvocations + 1
+
+    if action.limit >= 0
+    and action.numberOfInvocations >= action.limit then
+        action.enabled = false
     end
 
     return true
@@ -352,6 +378,62 @@ function Luvent:disableAction(actionToFind)
     local exists,index = findAction(self, actionToFind)
     assert(exists)
     self.actions[index].enabled = false
+end
+
+--- Determine if an action is enabled or not.
+--
+-- @param actionToFind The action to check.  This must either be an
+-- action ID or something acceptable to the Luvent:addAction() method.
+--
+-- @return Boolean true if the action is enabled and false if the
+-- action is disabled.
+function Luvent:isActionEnabled(actionToFind)
+    local exists,index = findAction(self, actionToFind)
+    assert(exists)
+    return self.actions[index].enabled
+end
+
+--- Set a limit on how many times events will call an action.
+--
+-- This method tells Luvent to disable the action after a certain
+-- number of invocations.  Luvent will only disable the action, not
+-- remove it, so that later we can re-enable it.  Luvent only enforces
+-- the limit on the event that calls this method, even if multiple
+-- events share the action.
+--
+-- @param actionToFind The action to modify.  This must either be an
+-- action ID or something acceptable to the Luvent:addAction() method.
+--
+-- @param limit A non-negative integer representing the maximum number
+-- of times the invoke the action.  If the value is zero then Luvent
+-- will disable the action.
+function Luvent:setActionTriggerLimit(actionToFind, limit)
+    local exists,index = findAction(self, actionToFind)
+    assert(exists)
+    assert(type(limit) == "number" and limit >= 0)
+    self.actions[index].limit = limit
+    self.actions[index].numberOfInvocations = 0
+
+    if limit == 0 then
+        self.actions[index].enabled = false
+    end
+end
+
+--- Remove any limit on an action.
+--
+-- This method gets rid of any limit placed on an action.  If the
+-- action is disabled then this method will re-enable it.
+--
+-- @param actionToFind The action to modify.  This must either be an
+-- action ID or something acceptable to the Luvent:addAction() method.
+--
+-- @see Luvent:setActionTriggerLimit
+function Luvent:removeActionTriggerLimit(actionToFind)
+    local exists,index = findAction(self, actionToFind)
+    assert(exists)
+    self.actions[index].limit = -1
+    self.actions[index].numberOfInvocations = 0
+    self.actions[index].enabled = true
 end
 
 -- Do not allow external code to modify the metatable of events and

@@ -155,6 +155,89 @@ describe("Basic action management", function ()
 
     end)
 
+    describe("Limiting the number of invocations for actions", function ()
+
+        it("Can disable an action after so many invocations", function ()
+            local noop = spy.new(noop)
+
+            event:addAction(noop)
+            event:setActionTriggerLimit(noop, 3)
+
+            for i = 1, 10 do
+                event:trigger()
+            end
+
+            assert.spy(noop).was.called(3)
+            assert.is_false(event:isActionEnabled(noop))
+        end)
+
+        it("Can remove a limit", function ()
+            local noop = spy.new(noop)
+
+            event:addAction(noop)
+            event:setActionTriggerLimit(noop, 0)
+
+            for i = 1, 10 do
+                event:trigger()
+            end
+
+            assert.spy(noop).was_not_called()
+            assert.is_false(event:isActionEnabled(noop))
+
+            event:removeActionTriggerLimit(noop)
+
+            for i = 1, 10 do
+                event:trigger()
+            end
+
+            assert.spy(noop).was.called(10)
+            assert.is_true(event:isActionEnabled(noop))
+        end)
+
+        it("Will disable an action with a limit of zero", function ()
+            event:addAction(noop)
+            event:setActionTriggerLimit(noop, 0)
+            assert.is_false(event:isActionEnabled(noop))
+        end)
+
+        it("Will re-enable an action when removing its limit", function ()
+            event:addAction(noop)
+            event:disableAction(noop)
+            assert.is_false(event:isActionEnabled(noop))
+            event:removeActionTriggerLimit(noop)
+            assert.is_true(event:isActionEnabled(noop))
+        end)
+
+        it("Only accepts non-negative numbers as limits", function ()
+            event:addAction(noop)
+            assert.is.error(function ()
+                event:setActionTriggerLimit(noop, -1)
+            end)
+            assert.is.error(function ()
+                event:setActionTriggerLimit(noop, "100")
+            end)
+        end)
+
+        it("Enforces limits per-event for shared actions", function ()
+            local event1 = Luvent.newEvent()
+            local event2 = Luvent.newEvent()
+
+            event1:addAction(noop)
+            event2:addAction(noop)
+            
+            event1:setActionTriggerLimit(noop, 10)
+
+            for i = 1, 10 do
+                event1:trigger()
+                event2:trigger()
+            end
+
+            assert.is_false(event1:isActionEnabled(noop))
+            assert.is_true(event2:isActionEnabled(noop))
+        end)
+
+    end)
+
 end)
 
 describe("Triggering events", function ()

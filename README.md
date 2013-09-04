@@ -58,6 +58,9 @@ consists of the following functions and methods:
 * `Luvent:hasAction(action_or_id)`
 * `Luvent:disableAction(action_or_id)`
 * `Luvent:enableAction(action_or_id)`
+* `Luvent:isActionEnabled(action_or_id)`
+* `Luvent:setActionTriggerLimit(action_or_id, limit)`
+* `Luvent:removeActionTriggerLimit(action_or_id)`
 * `Luvent:trigger(...)`
 
 **Note:** Developers must never rely on the properties of the return
