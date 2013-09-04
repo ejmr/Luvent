@@ -68,7 +68,7 @@ consists of the following functions and methods:
   part of the public API.
 
 The parameter `action` must be a function, coroutine, or table that
-implements the `__call()` metamethod.  The `addAction()` method
+implements the `__call()` [metamethod][].  The `addAction()` method
 returns an ID for the new action which you can save and later pass on
 to any method that accepts `action_or_id`.  This is useful for keeping
 track of actions when you have no access to the original action
@@ -201,3 +201,4 @@ Copyright 2013 Eric James Michael Ritz
 [LDoc]: http://stevedonovan.github.io/ldoc/
 [Busted]: http://olivinelabs.com/busted/
 [coroutines]: http://www.lua.org/manual/5.2/manual.html#2.6
+[metamethod]: http://www.lua.org/manual/5.2/manual.html#2.4
