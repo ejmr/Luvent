@@ -61,6 +61,8 @@ consists of the following functions and methods:
 * `Luvent:isActionEnabled(action_or_id)`
 * `Luvent:setActionTriggerLimit(action_or_id, limit)`
 * `Luvent:removeActionTriggerLimit(action_or_id)`
+* `Luvent:setActionPriority(action_or_id, priority)`
+* `Luvent:removeActionPriority(action_or_id, priority)`
 * `Luvent:trigger(...)`
 
 **Note:** Developers must never rely on the properties of the return
