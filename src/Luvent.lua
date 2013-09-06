@@ -121,6 +121,12 @@ local function newAction(callable)
     -- possible to disable an action without removing it.
     action.enabled = true
 
+    -- Each action has a priority, which is a non-negative integer.
+    -- Events will execute actions in the order of their priority
+    -- value which this property represents.  By default the value is
+    -- zero so that all actions have equal priority.
+    action.priority = 0
+
     -- This property represents the number of times events can invoke
     -- this action.  If the value is a non-negative number then Luvent
     -- will disable the action after trigger() invokes the action that
