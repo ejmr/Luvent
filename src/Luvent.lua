@@ -202,6 +202,19 @@ local function findAction(event, actionToFind)
     return false, nil
 end
 
+--- Sort the actions in an event based on priority.
+--
+-- This sort is not stable, so actions with the same priority may or
+-- may not remain in the same position.
+--
+-- @param event The event with the actions we sort.
+local function sortActionsByPriority(event)
+    table.sort(event.actions,
+        function (a1, a2)
+            return a1.priority > a2.priority
+        end)
+end
+
 --- Add an action to an event.
 --
 -- It is not possible to add the same action more than once.
@@ -322,6 +335,8 @@ function Luvent:trigger(...)
             self:removeAction(action.id)
         end
     end
+
+    sortActionsByPriority(self)
         
     for _,action in ipairs(self.actions) do
         if action.interval > 0 then
@@ -352,6 +367,42 @@ function Luvent:setActionInterval(actionToFind, interval)
     local exists,index = findAction(self, actionToFind)
     assert(exists)
     self.actions[index].interval = interval
+end
+
+--- Modify the priority of an action.
+--
+-- This method lets us control the order in which a triggered event
+-- will invoke actions.  It will sort all actions based on their
+-- priority and call those with the highest values first.  If multiple
+-- actions share the same priority then there is no guarantee about
+-- the order in which Luvent will invoke them.
+--
+-- @param actionToFind The action to modify.  This must either be
+-- something acceptable to Luvent:addAction() or it must be the ID
+-- that Luvent:addAction() returns for each action.  It is an error to
+-- call this method on an action that does is not part of the event.
+--
+-- @param priority A non-negative integer representing the priority.
+function Luvent:setActionPriority(actionToFind, priority)
+    local exists,index = findAction(self, actionToFind)
+    assert(exists)
+    assert(type(priority) == "number" and priority >= 0)
+    self.actions[index].priority = priority
+end
+
+--- Remove the priority of an action.
+--
+-- This method will get rid of the action's priority setting, meaning
+-- that it will be pushed down to the bottom of the list of actions.
+--
+-- @param actionToFind The action to modify.  This must either be
+-- something acceptable to Luvent:addAction() or it must be the ID
+-- that Luvent:addAction() returns for each action.  It is an error to
+-- call this method on an action that does is not part of the event.
+function Luvent:removeActionPriority(actionToFind)
+    local exists,index = findAction(self, actionToFind)
+    assert(exists)
+    self.actions[index].priority = 0
 end
 
 --- Enable an action.
