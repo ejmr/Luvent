@@ -428,3 +428,59 @@ describe("Using coroutines as actions", function ()
     end)
 
 end)
+
+describe("Action priorities", function ()
+
+    local event
+    local ticks
+    local addA, addB, addC
+
+    before_each(function ()
+        event = Luvent.newEvent()
+        ticks = {}
+        addA = event:addAction(function ()
+            table.insert(ticks, "A")
+        end)
+        addB = event:addAction(function ()
+            table.insert(ticks, "B")
+        end)
+        addC = event:addAction(function ()
+            table.insert(ticks, "C")
+        end)
+    end)
+
+    it("Calls actions in the order they are added by default", function ()
+        event:trigger()
+        assert.are.same(ticks, {"A", "B", "C"})
+    end)
+
+    it("Requires priorities to be non-negative integers", function ()
+        assert.is.error(function () event:setActionPriority(addA, -1) end)
+        assert.is.error(function () event:setActionPriority(addA, "10") end)
+    end)
+
+    it("Calls actions with priorities first", function ()
+        event:setActionPriority(addC, 1)
+        event:trigger()
+        assert.are.equal(ticks[1], "C")
+    end)
+
+    it("Sorts priorities in descending order", function ()
+        event:setActionPriority(addC, 3)
+        event:setActionPriority(addA, 2)
+        event:setActionPriority(addB, 1)
+        event:trigger()
+        assert.are.same(ticks, {"C", "A", "B"})
+    end)
+
+    it("Can remove priorities", function ()
+        event:setActionPriority(addC, 3)
+        event:setActionPriority(addA, 2)
+        event:setActionPriority(addB, 1)
+        event:trigger()
+        event:removeActionPriority(addA)
+        event:trigger()
+        assert.are.same(ticks, {"C", "A", "B", "C", "B", "A"})
+    end)
+
+end)
