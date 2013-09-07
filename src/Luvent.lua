@@ -350,6 +350,55 @@ function Luvent:trigger(...)
     end
 end
 
+--- Create an action setter method.
+--
+-- This utility function creates a setter method for a Luvent object
+-- that will modify one of its actions.  The function accepts three
+-- arguments, the last one being optional:
+--
+-- @param property A string naming the property of the action which we
+-- want to change.
+--
+-- @param valueType A string naming the required type of the value.
+-- Values of the type "number" are also forced to be non-negative.
+--
+-- @param default An optional default value.  If this is provided then
+-- the method created will not accept a value parameter. Instead it
+-- will always assign the action property this value.
+--
+-- @return A method of two arguments.  The first is an action to find
+-- and modify.  The second is a value to give to a property of a
+-- specific action, indicated by this function's parameters.  If this
+-- function receives a third parameter then the returned method will
+-- only accept the first parameter.
+--
+-- @see findAction
+-- @see Luvent:setActionInterval
+-- @see Luvent:enableAction
+local function createActionSetter(property, valueType, default)
+    if default ~= nil then
+        assert(type(default) == valueType)
+        return function (event, actionToFind)
+            local exists,index = findAction(event, actionToFind)
+            assert(exists)
+            event.actions[index][property] = default
+        end
+    end
+
+    return function (event, actionToFind, newValue)
+        local newValueType = type(newValue)
+        local exists,index = findAction(event, actionToFind)
+        assert(exists)
+        assert(newValueType == valueType)
+
+        if newValueType == "number" then
+            assert(newValue >= 0)
+        end
+
+        event.actions[index][property] = newValue
+    end
+end
+
 --- Modify the interval of an action
 --
 -- This method lets us change an action to adhere to an interval, i.e.
@@ -363,11 +412,7 @@ end
 -- call this method on an action that does is not part of the event.
 --
 -- @param interval An integer representing the new interval.
-function Luvent:setActionInterval(actionToFind, interval)
-    local exists,index = findAction(self, actionToFind)
-    assert(exists)
-    self.actions[index].interval = interval
-end
+Luvent.setActionInterval = createActionSetter("interval", "number")
 
 --- Modify the priority of an action.
 --
@@ -383,12 +428,7 @@ end
 -- call this method on an action that does is not part of the event.
 --
 -- @param priority A non-negative integer representing the priority.
-function Luvent:setActionPriority(actionToFind, priority)
-    local exists,index = findAction(self, actionToFind)
-    assert(exists)
-    assert(type(priority) == "number" and priority >= 0)
-    self.actions[index].priority = priority
-end
+Luvent.setActionPriority = createActionSetter("priority", "number")
 
 --- Remove the priority of an action.
 --
@@ -399,11 +439,7 @@ end
 -- something acceptable to Luvent:addAction() or it must be the ID
 -- that Luvent:addAction() returns for each action.  It is an error to
 -- call this method on an action that does is not part of the event.
-function Luvent:removeActionPriority(actionToFind)
-    local exists,index = findAction(self, actionToFind)
-    assert(exists)
-    self.actions[index].priority = 0
-end
+Luvent.removeActionPriority = createActionSetter("priority", "number", 0)
 
 --- Enable an action.
 --
@@ -415,11 +451,7 @@ end
 -- action ID or something acceptable to the Luvent:addAction() method.
 --
 -- @see Luvent:disableAction
-function Luvent:enableAction(actionToFind)
-    local exists,index = findAction(self, actionToFind)
-    assert(exists)
-    self.actions[index].enabled = true
-end
+Luvent.enableAction = createActionSetter("enabled", "boolean", true)
 
 --- Disable an action.
 --
@@ -431,11 +463,7 @@ end
 -- action ID or something acceptable to the Luvent:addAction() method.
 --
 -- @see Luvent:enableAction
-function Luvent:disableAction(actionToFind)
-    local exists,index = findAction(self, actionToFind)
-    assert(exists)
-    self.actions[index].enabled = false
-end
+Luvent.disableAction = createActionSetter("enabled", "boolean", false)
 
 --- Determine if an action is enabled or not.
 --
