@@ -12,6 +12,15 @@ Whenever you trigger an event the library will execute all functions
 attached to that event.  You may trigger an event multiple times and
 can provide different arguments to that event’s functions each time.
 
+There exists some great alternatives to Luvent, as you will see listed
+below.  However, most of those libraries do not have an explicit
+license.  I created Luvent to use in a commercial game, built on the
+[LÖVE][] framework, and so I could not use any library that did not
+explicitly grant legal permission to use the code in that situation.
+Luvent may not be that different from existing libraries in terms of
+its functionality; but it is and will always be free for developers to
+use in any program whether it is commercial or not.
+
 
 Requirements
 ------------
@@ -204,3 +213,4 @@ Copyright 2013 Eric James Michael Ritz
 [Busted]: http://olivinelabs.com/busted/
 [coroutines]: http://www.lua.org/manual/5.2/manual.html#2.6
 [metamethod]: http://www.lua.org/manual/5.2/manual.html#2.4
+[LÖVE]: http://love2d.org/
