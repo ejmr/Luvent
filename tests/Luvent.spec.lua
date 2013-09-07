@@ -57,6 +57,7 @@ describe("Basic action management", function ()
             assert.has_no_errors(function ()
                 event:addAction(sort)
             end)
+            assert.is_true(event:hasAction(sort))
         end)
 
         it("Requires actions to be callable", function ()
