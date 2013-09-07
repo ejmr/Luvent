@@ -362,30 +362,19 @@ end
 -- @param valueType A string naming the required type of the value.
 -- Values of the type "number" are also forced to be non-negative.
 --
--- @param default An optional default value.  If this is provided then
--- the method created will not accept a value parameter. Instead it
--- will always assign the action property this value.
+-- @param default An optional default value to use if the created
+-- method does not receive a value argument.
 --
 -- @return A method of two arguments.  The first is an action to find
 -- and modify.  The second is a value to give to a property of a
--- specific action, indicated by this function's parameters.  If this
--- function receives a third parameter then the returned method will
--- only accept the first parameter.
+-- specific action, indicated by this function's parameters.
 --
 -- @see findAction
 -- @see Luvent:setActionInterval
 -- @see Luvent:enableAction
 local function createActionSetter(property, valueType, default)
-    if default ~= nil then
-        assert(type(default) == valueType)
-        return function (event, actionToFind)
-            local exists,index = findAction(event, actionToFind)
-            assert(exists)
-            event.actions[index][property] = default
-        end
-    end
-
     return function (event, actionToFind, newValue)
+        local newValue = newValue or default
         local newValueType = type(newValue)
         local exists,index = findAction(event, actionToFind)
         assert(exists)
