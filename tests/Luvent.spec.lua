@@ -262,6 +262,11 @@ describe("Triggering events", function ()
         button = { clickCount = 0, label = "" }
     end)
 
+    it("Allows triggering an event with no actions", function ()
+        assert.are.equal(onClickEvent:getActionCount(), 0)
+        assert.has_no.errors(function () onClickEvent:trigger() end)
+    end)
+
     it("Calls actions that take no arguments", function ()
         local noop = spy.new(function () end)
         
