@@ -57,42 +57,43 @@ Documentation
 -------------
 
 Running the command `make docs` will populate the `docs/` directory
-with HTML documents that describe Luvent’s API.  The public API
-consists of the following functions and methods:
+with HTML documents that describe Luvent’s API.
 
-* `Luvent.newEvent()`
-* `Luvent:addAction(action)`
-* `Luvent:setActionInterval(action_or_id, interval)`
-* `Luvent:removeAction(action_or_id)`
-* `Luvent:getActionCount()`
-* `Luvent:hasAction(action_or_id)`
-* `Luvent:disableAction(action_or_id)`
-* `Luvent:enableAction(action_or_id)`
-* `Luvent:isActionEnabled(action_or_id)`
-* `Luvent:setActionTriggerLimit(action_or_id, limit)`
-* `Luvent:removeActionTriggerLimit(action_or_id)`
-* `Luvent:setActionPriority(action_or_id, priority)`
-* `Luvent:removeActionPriority(action_or_id, priority)`
-* `Luvent:trigger(...)`
+### Terminology ###
 
-**Note:** Developers must never rely on the properties of the return
-  values of `Luvent:newEvent()`.  Its non-method properties are not
-  part of the public API.
+* **Event:** An object which you can `trigger(...)` in order to invoke
+  *all actions* associated with the event.
 
-The parameter `action` must be a function, coroutine, or table that
-implements the `__call()` [metamethod][].  The `addAction()` method
-returns an ID for the new action which you can save and later pass on
-to any method that accepts `action_or_id`.  This is useful for keeping
-track of actions when you have no access to the original action
-itself, e.g. adding an anonymous function as an action.  The Luvent
-API only guarantees the following attributes regarding action IDs:
+* **Action:** Any of the following qualify as actions that you can
+  associate with events:
 
-1. An action ID is true in a boolean context.
+    1. A function.
+    2. A [coroutine][].
+    3. A table that supports the `__call()` [metamethod][].
 
-2. If two action IDs are equal then they represent the same action.
+* **Action ID:** An object that represents an action.  The method
+  `addAction()` will return an action ID that you can save to later
+  use with methods such as `disableAction()`.  Instead of the ID you
+  can also use the action itself, e.g. if the action is a function
+  then any method that asks for an ‘action or ID’ will accept that
+  function itself or the ID that `addAction()` returned when given the
+  function.  Action IDs are always true in a boolean context.  If two
+  IDs are equal then they represent the same action.  Those are the
+  only two properties that the API provides; if you rely on anything
+  else about action IDs (e.g. their type) then your code may suddenly
+  break in the future.
 
-Code that relies on anything else about action IDs, e.g. their type or
-their specific values, may break in the future without warning.
+### Basic Example ###
+
+You create new events with the `newEvent()` function. Note well that
+must *never* rely on the properties of the event objects.  Anything
+that is not a method is not part of the API and may change at any
+time.
+
+Once you have an event object you can begin to add ‘actions’ to it via
+its `addAction()` method.  To invoke those actions you ‘trigger’ the
+event by calling its `trigger()` method.  Every action associated with
+the event will receive any parameters you give to `trigger()`.
 
 Below is a lengthy example that demonstrates the basics of creating
 and triggering events, and adding and removing actions.
@@ -175,8 +176,71 @@ bee:damage(50)
 print(#Enemy.LIVING)    -- Prints "0"
 ```
 
-Luvent discards all return values from action functions or anything
-that coroutines yield.
+**Note:** Luvent discards all return values from action functions or
+anything that coroutines yield.
+
+### Enabling and Disabling Actions ###
+
+In the example above we removed an action.  Calling the
+`getActionCount()` of an event will tell us how many actions it has.
+However, this is not necessarily the number of actions it will invoke
+if we trigger the event.
+
+When we add an action Luvent enables it by default.  We can disable
+actions though.  For example:
+
+```lua
+local debugAction = Enemy.onDie:addAction(
+    function (enemy)
+        print(string.format("Enemy %s died", enemy.family))
+    end)
+
+-- ...Later in the code...
+
+Enemy.onDie:disableAction(debugAction)
+```
+
+The difference between this method and `removeAction()` is that this
+method only turns-off the action temporarily.  Later we could call
+`enableAction()` to turn the action back on.  When we use
+`removeAction()`, however, it is like deleting the action from the
+event.
+
+You can also think of the methods in pairs.
+
+1. `removeAction()` is the opposite of `addAction()`.
+
+2. `disableAction()` is the opposite of `enableAction()`.
+
+The first pair of methods affect the return value of
+`getActionCount()` and `hasAction()`.  The second pair does not.
+
+### Action Intervals ###
+
+### Prioritizing Actions ###
+
+### Action Limits ###
+
+### Complete List of the Public API ###
+
+You create events with the function `Luvent.newEvent()`.  The function
+returns an object with the following methods:
+
+* `trigger(...)`
+* `addAction(action)`
+* `removeAction(action_or_id)`
+* `removeAllActions()`
+* `getActionCount()`
+* `hasAction(action_or_id)`
+* `isActionEnabled(action_or_id)`
+* `enableAction(action_or_id)`
+* `disableAction(action_or_id)`
+* `setActionPriority(action_or_id)`
+* `removeActionPriority(action_or_id)`
+* `setActionTriggerLimit(action_or_id)`
+* `removeActionTriggerLimit(action_or_id)`
+* `setActionInterval(action_or_id)`
+* `removeActionInterval(action_or_id)`
 
 
 Acknowledgments and Alternatives
@@ -212,6 +276,6 @@ Copyright 2013 Eric James Michael Ritz
 [LuaJIT]: http://luajit.org/
 [LDoc]: http://stevedonovan.github.io/ldoc/
 [Busted]: http://olivinelabs.com/busted/
-[coroutines]: http://www.lua.org/manual/5.2/manual.html#2.6
+[coroutine]: http://www.lua.org/manual/5.2/manual.html#2.6
 [metamethod]: http://www.lua.org/manual/5.2/manual.html#2.4
 [LÖVE]: http://love2d.org/
