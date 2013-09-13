@@ -27,9 +27,9 @@ Requirements
 
 Luvent requires one of the following Lua implementations:
 
-* Lua 5.1 or 5.2
-* [LuaJIT][] 2.0
-* LÖVE 0.8.0
+* Lua >= 5.1
+* [LuaJIT][] >= 2.0
+* LÖVE >= 0.8.0
 
 These are the versions we use to test Luvent.  It should work with
 later versions of each, and possibly older versions as well.
