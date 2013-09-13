@@ -383,6 +383,20 @@ describe("Controlling time between actions #delay", function ()
         assert.spy(bumpTicks).was_not.called()
     end)
 
+    it("Can remove the delay from an action", function ()
+        local id = event:addAction(bumpTicks)
+        event:setActionInterval(id, 10)
+
+        while (os.time() - startTime) < 3 do
+            event:trigger()
+        end
+
+        assert.are.equal(ticks, 0)
+        event:removeActionInterval(id)
+        event:trigger()
+        assert.are.equal(ticks, 1)
+    end)
+
 end)
 
 describe("Using coroutines as actions", function ()

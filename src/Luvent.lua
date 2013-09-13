@@ -403,6 +403,18 @@ end
 -- @param interval An integer representing the new interval.
 Luvent.setActionInterval = createActionSetter("interval", "number")
 
+--- Remove the interval of an action.
+--
+-- This method will remove an interval from the given action if it has
+-- one.  It is safe to call this method on an action that has no
+-- interval to begin with.
+--
+-- @param actionToFind The action to modify.  This must either be
+-- something acceptable to Luvent:addAction() or it must be the ID
+-- that Luvent:addAction() returns for each action.  It is an error to
+-- call this method on an action that does is not part of the event.
+Luvent.removeActionInterval = createActionSetter("interval", "number", 0)
+
 --- Modify the priority of an action.
 --
 -- This method lets us control the order in which a triggered event
