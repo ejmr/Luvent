@@ -1,15 +1,10 @@
---[[------------------------------------------------------------------
+--- Luvent :: A Simple Event Library
 --
--- Luvent :: A Simple Event Library
+-- For more information see: https://github.com/ejmr/Luvent
 --
--- For documentation and license information see the official project
--- website: <https://github.com/ejmr/Luvent>
---
--- Copyright 2013 Eric James Michael Ritz
---
---]]------------------------------------------------------------------
-
--- This table represents the entire module.
+-- @copyright 2013 Eric James Michael Ritz
+-- @class module
+-- @name Luvent
 local Luvent = {}
 Luvent.__index = Luvent
 
@@ -23,8 +18,7 @@ function Luvent.newEvent()
 
     --- An event object created by Luvent.
     --
-    -- @class table
-    -- @name Event
+    -- @table Event
     --
     -- @field actions An array containing all actions to execute when
     -- triggering this event.
@@ -64,7 +58,7 @@ Luvent.__eq = function (e1, e2)
     return true
 end
 
---- The metatable that internally designates actions.
+-- The metatable that internally designates actions.
 Luvent.Action = {}
 Luvent.Action.__index = Luvent.Action
 
@@ -105,53 +99,62 @@ end
 -- @return The new action.
 local function newAction(callable)
     local action = {}
-    
+
+    --- An action object.
+    --
+    -- @table Action
+    --
+    -- @field callable The function, coroutine, or other callable that
+    -- we execute whenever we trigger an event using this action.
+    --
+    -- @field id This is an ID which we can use later to refer to this
+    -- action.  For example, we could use this ID to find an action to
+    -- remove when we added that action using an anonymous function,
+    -- meaning we would not be able to use the function itself to find
+    -- the action like normal.
+    --
+    -- @field enabled This boolean indicates whether or not the action
+    -- is enabled.  Events will never invoke disable actions.  This
+    -- flag makes it possible to disable an action without removing
+    -- it.
+    --
+    -- @field priority Each action has a priority, which is a
+    -- non-negative integer.  Events will execute actions in the order
+    -- of their priority value which this property represents.  By
+    -- default the value is zero so that all actions have equal
+    -- priority.
+    --
+    -- @field limit This property represents the number of times
+    -- events can invoke this action.  If the value is a non-negative
+    -- number then Luvent will disable the action after trigger()
+    -- invokes the action that many times.  If the value is a negative
+    -- number then Luvent will always invoke the action when
+    -- triggering events.  We use a negative number as a sentinel
+    -- value because the public API does not accept negative limit
+    -- values.
+    --
+    -- @field numberOfInvocations This property keeps track of how
+    -- many times events have invoked this action.  We reset this to
+    -- zero whenever we change the 'limit' property.
+    --
+    -- @field interval If we have a non-zero interval then we need to
+    -- keep track of how often we consider this action for execution.
+    --
+    -- @field timeOfLastInvocation This property helps track the time
+    -- of when we last called this action, and when considering
+    -- whether or not to call it again we subtract the current time
+    -- from this time and see if it is greater to or equal than the
+    -- interval.  When first creating the action we set the property
+    -- to the current time so that we can start counting the clock
+    -- from the moment we created the action (i.e. now) up until the
+    -- first time the interval elapses.
     assert(isActionCallable(callable))
     action.callable = callable
-
-    -- This is an ID which we can use later to refer to this action.
-    -- For example, we could use this ID to find an action to remove
-    -- when we added that action using an anonymous function, meaning
-    -- we would not be able to use the function itself to find the
-    -- action like normal.
     action.id = tostring(callable)
-
-    -- This boolean indicates whether or not the action is enabled.
-    -- Events will never invoke disable actions.  This flag makes it
-    -- possible to disable an action without removing it.
     action.enabled = true
-
-    -- Each action has a priority, which is a non-negative integer.
-    -- Events will execute actions in the order of their priority
-    -- value which this property represents.  By default the value is
-    -- zero so that all actions have equal priority.
     action.priority = 0
-
-    -- This property represents the number of times events can invoke
-    -- this action.  If the value is a non-negative number then Luvent
-    -- will disable the action after trigger() invokes the action that
-    -- many times.  If the value is a negative number then Luvent will
-    -- always invoke the action when triggering events.  We use a
-    -- negative number as a sentinel value because the public API does
-    -- not accept negative limit values.
-    --
-    -- @see Luvent:setActionTriggerLimit
     action.limit = -1
-
-    -- This property keeps track of how many times events have invoked
-    -- this action.  We reset this to zero whenever we change the
-    -- 'limit' property.
     action.numberOfInvocations = 0
-
-    -- If we have a non-zero interval then we need to keep track of
-    -- how often we consider this action for execution.  The
-    -- properties below help track the time of when we last called
-    -- this action, and when considering whether or not to call it
-    -- again we subtract the current time from this time and see if it
-    -- is greater to or equal than the interval.  When first creating
-    -- the action we set the property to the current time so that we
-    -- can start counting the clock from the moment we created the
-    -- action (i.e. now) up until the first time the interval elapses.
     action.interval = 0
     action.timeOfLastInvocation = os.time()
 
@@ -388,7 +391,7 @@ local function createActionSetter(property, valueType, default)
     end
 end
 
---- Modify the interval of an action
+--- Modify the interval of an action.
 --
 -- This method lets us change an action to adhere to an interval, i.e.
 -- the number of seconds that must pass before the event will invoke
@@ -401,6 +404,9 @@ end
 -- call this method on an action that does is not part of the event.
 --
 -- @param interval An integer representing the new interval.
+--
+-- @class function
+-- @name Luvent:setActionInterval
 Luvent.setActionInterval = createActionSetter("interval", "number")
 
 --- Remove the interval of an action.
@@ -413,6 +419,9 @@ Luvent.setActionInterval = createActionSetter("interval", "number")
 -- something acceptable to Luvent:addAction() or it must be the ID
 -- that Luvent:addAction() returns for each action.  It is an error to
 -- call this method on an action that does is not part of the event.
+--
+-- @class function
+-- @name Luvent:removeActionInterval
 Luvent.removeActionInterval = createActionSetter("interval", "number", 0)
 
 --- Modify the priority of an action.
@@ -429,6 +438,9 @@ Luvent.removeActionInterval = createActionSetter("interval", "number", 0)
 -- call this method on an action that does is not part of the event.
 --
 -- @param priority A non-negative integer representing the priority.
+--
+-- @class function
+-- @name Luvent:setActionPriority
 Luvent.setActionPriority = createActionSetter("priority", "number")
 
 --- Remove the priority of an action.
@@ -440,6 +452,9 @@ Luvent.setActionPriority = createActionSetter("priority", "number")
 -- something acceptable to Luvent:addAction() or it must be the ID
 -- that Luvent:addAction() returns for each action.  It is an error to
 -- call this method on an action that does is not part of the event.
+--
+-- @class function
+-- @name Luvent:removeActionPriority
 Luvent.removeActionPriority = createActionSetter("priority", "number", 0)
 
 --- Enable an action.
@@ -452,6 +467,9 @@ Luvent.removeActionPriority = createActionSetter("priority", "number", 0)
 -- action ID or something acceptable to the Luvent:addAction() method.
 --
 -- @see Luvent:disableAction
+--
+-- @class function
+-- @name Luvent:enableAction
 Luvent.enableAction = createActionSetter("enabled", "boolean", true)
 
 --- Disable an action.
@@ -464,6 +482,9 @@ Luvent.enableAction = createActionSetter("enabled", "boolean", true)
 -- action ID or something acceptable to the Luvent:addAction() method.
 --
 -- @see Luvent:enableAction
+--
+-- @class function
+-- @name Luvent:disableAction
 Luvent.disableAction = createActionSetter("enabled", "boolean", false)
 
 --- Determine if an action is enabled or not.
