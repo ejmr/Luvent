@@ -63,9 +63,9 @@ with HTML documents that describe Luvent’s API.
 * **Action:** Any of the following qualify as actions that you can
   associate with events:
 
-    1. A function.
-    2. A [coroutine][].
-    3. A table that supports the `__call()` [metamethod][].
+  1. A function.
+  2. A [coroutine][].
+  3. A table that supports the `__call()` [metamethod][].
 
 * **Action ID:** An object that represents an action.  The method
   `addAction()` will return an action ID that you can save to later
