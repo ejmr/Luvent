@@ -1,10 +1,6 @@
 Luvent: A Simple Event Library for Lua
 ======================================
 
-**Luvent is in early development and not recommended for any
-  production software.  The API is subject to change and break
-  compatibility without warning.**
-
 Luvent is a library for [Lua][], written entirely in Lua, which helps
 support [event-driven programming][EDP].  Luvent lets you create
 events, which are objects with any number of associated functions.
@@ -27,9 +23,9 @@ Requirements
 
 Luvent requires one of the following Lua implementations:
 
-* Lua >= 5.1
+* [Lua][] >= 5.1
 * [LuaJIT][] >= 2.0
-* LÖVE >= 0.8.0
+* [LÖVE][] >= 0.8.0
 
 These are the versions we use to test Luvent.  It should work with
 later versions of each, and possibly older versions as well.
@@ -99,8 +95,8 @@ Below is a lengthy example that demonstrates the basics of creating
 and triggering events, and adding and removing actions.
 
 ```lua
--- In this example we will pretend we are implementing a module in a
--- game that creates and manages enemies.  To simplfy the example we
+-- In this example you will pretend you are implementing a module in a
+-- game that creates and manages enemies.  To simplfy the example you
 -- use Enrique García Cota's terrific MiddleClass library in order
 -- to make the class and objects for enemies.
 --
@@ -121,7 +117,7 @@ function Enemy:initialize(family, maxHP)
     table.insert(Enemy.LIVING, self)
 end
 
--- This is the event we trigger any time an enemy dies.
+-- This is the event you trigger any time an enemy dies.
 Enemy.static.onDie = Luvent.newEvent()
 
 -- This method applies damage to an enemy and will trigger its 'onDie'
@@ -133,8 +129,8 @@ function Enemy:damage(damage)
     end
 end
 
--- Now we can start associating actions with the 'onDie' event.  First
--- we start by removing the enemy from the table of living enemies.
+-- Now you can start associating actions with the 'onDie' event.  First
+-- you start by removing the enemy from the table of living enemies.
 Enemy.onDie:addAction(
     function (enemy)
         for index,living_enemy in ipairs(Enemy.LIVING) do
@@ -145,16 +141,16 @@ Enemy.onDie:addAction(
         end
     end)
 
--- For debugging we want to see on the console when an enemy dies, so
--- we add that as a separate action.  This time we save the return
--- value of addAction() so that later we can use that to remove the
--- action when we want to stop printing debugging output.
+-- For debugging you want to see on the console when an enemy dies, so
+-- you add that as a separate action.  This time you save the return
+-- value of addAction() so that later you can use that to remove the
+-- action when you want to stop printing debugging output.
 local debugAction = Enemy.onDie:addAction(
     function (enemy)
         print(string.format("Enemy %s died", enemy.family))
     end)
 
--- Now we make some enemies and kill them to demonstrate how the
+-- Now you make some enemies and kill them to demonstrate how the
 -- trigger() method used in Enemy:damage() invokes the actions.
 
 local bee = Enemy:new("Bee", 10)
@@ -169,8 +165,8 @@ print(#Enemy.LIVING)
 ladybug:damage(100)
 print(#Enemy.LIVING)    -- Prints "1"
 
--- Now we turn off the debugging output by removing that action.  As a
--- result we will see no output after killing the bee.
+-- Now you turn off the debugging output by removing that action.  As a
+-- result you will see no output after killing the bee.
 Enemy.onDie:removeAction(debugAction)
 bee:damage(50)
 print(#Enemy.LIVING)    -- Prints "0"
@@ -181,12 +177,12 @@ anything that coroutines yield.
 
 ### Enabling and Disabling Actions ###
 
-In the example above we removed an action.  Calling the
+In the example above you removed an action.  Calling the
 `getActionCount()` of an event will tell us how many actions it has.
 However, this is not necessarily the number of actions it will invoke
-if we trigger the event.
+if you trigger the event.
 
-When we add an action Luvent enables it by default.  We can disable
+When you add an action Luvent enables it by default.  You can disable
 actions though.  For example:
 
 ```lua
@@ -201,8 +197,8 @@ Enemy.onDie:disableAction(debugAction)
 ```
 
 The difference between this method and `removeAction()` is that this
-method only turns-off the action temporarily.  Later we could call
-`enableAction()` to turn the action back on.  When we use
+method only turns-off the action temporarily.  Later you could call
+`enableAction()` to turn the action back on.  When you use
 `removeAction()`, however, it is like deleting the action from the
 event.
 
@@ -217,9 +213,127 @@ The first pair of methods affect the return value of
 
 ### Action Intervals ###
 
+Events may have actions with *intervals,* i.e. guaranteed delays in
+the amount of time that must pass before the action will run again.
+Luvent allows us to define intervals in terms of seconds.  For
+example:
+
+```lua
+-- In this example you have a game where the AI has an 'onThink' event.
+-- You want the AI to do many things on that event, but some of them
+-- may be expensive in terms of performance.  So there may be actions
+-- which you only want to run every so many seconds.
+
+local function someSlowFunction(ai)
+    -- You do something with the AI here that can take a while and so
+    -- you do not want to always run this action.
+end
+
+AI.onThink:addAction(someSlowFunction)
+
+-- Now you can tell the event to execute the action every ten seconds.
+AI.onThink:setActionInterval(someSlowFunction, 10)
+
+-- No matter how often you trigger the event, someSlowFunction() will
+-- only run once per ten seconds.
+while true do
+    AI.onThink:trigger()
+end
+```
+
+Actions have no interval by default.  You can use the method
+`removeActionInterval()` to take away any interval from an action,
+even if that action has no interval in the first place.
+
 ### Prioritizing Actions ###
 
+By default Luvent makes no guarantees about the order in which an
+event will execute actions.  But you can create such guarantees by
+assigning numeric priorities to actions.  In that case Luvent will
+invoke actions based on the order of the priority, from highest to
+lowest, for example:
+
+```lua
+-- Let's say you are writing an AI for a board game.  You have an
+-- 'onMove' event which triggers a variety of actions.  The functions
+-- have stub implementations for the sake of brevity.
+
+AI.onMove = Luvent.newEvent()
+
+local function makeMove(player, board) end
+local function analyzeCurrentPosition(player, board) end
+local function searchPatternDatabase(player, board) end
+local function estimateScore(player, board) end
+
+AI.onMove:addAction(makeMove)
+AI.onMove:addAction(analyzeCurrentPosition)
+AI.onMove:addAction(searchPatternDatabase)
+AI.onMove:addAction(estimateScore)
+
+-- At this point you have given no action any explicit priority.  So if
+-- you trigger the event now then there is no guarantee about the order
+-- in which Luvent will call each action.  You cannot even rely on the
+-- event to call the actions in the order you added them.
+
+AI.onMove:setActionPriority(makeMove, 2)
+AI.onMove:setActionPriority(analyzeCurrentPosition, 4)
+AI.onMove:setActionPriority(searchPatternDatabase, 3)
+AI.onMove:setActionPriority(estimateScore, 1)
+```
+
+After you set the priorities at the end then when you call
+`AI.onMove:trigger()` it will invoke the actions in this order:
+
+1. `analyzeCurrentPosition()`
+2. `searchPatternDatabase()`
+3. `makeMove()`
+4. `estimateScore()`
+
+You can use `removeActionPriority()` on any of these actions to place
+them back at the bottom of the list, which is Luvent’s default
+behavior.  Any action without an explicit priority will run last.  If
+more than one action has the same priority then there is no guarantee
+about the order in which Luvent will call those actions.
+
 ### Action Limits ###
+
+There are situations where you may want to limit the amount of times
+an event will invoke a specific action.  You can control this by
+setting the ‘limit’ for the action.  For example:
+
+```lua
+-- In this example you are working with an 'onDeath' event for players
+-- in a game.  The first time the player dies you want to save his or
+-- her score.  But the player can continue after that and you do not
+-- want to record scores after the first continue.  And so you want
+-- the action for saving the score to run only once.
+
+Game.onDeath = Luvent.newEvent()
+
+local function saveScore(player) end
+local function promptForContinue(player) end
+
+Game.onDeath:addAction(saveScore)
+Game.onDeath:addAction(promptForContinue)
+
+-- This tells Luvent the limit for the action, i.e. the number of
+-- times to invoke the action before automatically removing it.  This
+-- specific example causes the event to call saveScore() only once and
+-- then it will remove the action from 'onDeath'.
+Game.onDeath:setActionLimit(saveScore, 1)
+
+-- And for sanity this makes sure to save the score first by giving it
+-- a higher priority than promptForContinue().  The number ten here is
+-- an arbitrary choice; it just needs to be a number greater than zero
+-- since there is no explicit priority for the other action.
+Game.onDeath:setActionPriority(saveScore, 10)
+```
+
+The first call to `Game.onDeath:trigger()` will invoke `saveScore()`
+and then `promptForContinue()`.  All future `trigger()` calls will
+only invoke the second action.  Once an action reaches its limit then
+Luvent effectively calls `removeAction()`, meaning you would have to
+manually re-add the action before the event would use it again.
 
 ### Complete List of the Public API ###
 
