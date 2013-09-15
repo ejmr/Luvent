@@ -10,13 +10,14 @@ Luvent.__index = Luvent
 
 --- Create a new event.
 --
--- This is the constructor for creating events, i.e. Luvent objects.
+-- This is the constructor for creating events, i.e. objects which
+-- support the Luvent methods.
 --
 -- @return A new event.
 function Luvent.newEvent()
     local event = {}
 
-    --- An event object created by Luvent.
+    --- An event object.
     --
     -- @table Event
     --
@@ -37,6 +38,8 @@ end
 -- test can be slow because the comparison has an O(N^2) complexity.
 --
 -- @return A boolean indicating whether or not the events are equal.
+--
+-- @function Event.__eq
 Luvent.__eq = function (e1, e2)
     if getmetatable(e1) ~= Luvent or getmetatable(e2) ~= Luvent then
         return false
@@ -104,8 +107,8 @@ local function newAction(callable)
     --
     -- @table Action
     --
-    -- @field callable The function, coroutine, or other callable that
-    -- we execute whenever we trigger an event using this action.
+    -- @field callable When we trigger an event containing this action
+    -- then this property is what Luvent invokes.
     --
     -- @field id This is an ID which we can use later to refer to this
     -- action.  For example, we could use this ID to find an action to
@@ -164,6 +167,8 @@ end
 --- Compare two actions for equality.
 --
 -- @return A boolean indicating if the two actions share the same ID.
+--
+-- @function Action.__eq
 Luvent.Action.__eq = function (a1, a2)
     if getmetatable(a1) ~= Luvent.Action
     or getmetatable(a2) ~= Luvent.Action then
@@ -275,8 +280,7 @@ end
 
 --- Check for the existence of an action.
 --
--- @param actionToFind The action to search for within the event's
--- list of actions.
+-- @param actionToFind The action to search for.
 --
 -- @return Boolean true if the event uses the action, and false if it
 -- does not.
@@ -297,8 +301,6 @@ end
 -- @return Boolean true if we can invoke this action again at a later
 -- time and false if we cannot, e.g. if it is a dead coroutine, in
 -- which case we remove the action.
---
--- @see Luvent:setActionTriggerLimit
 local function invokeAction(action, ...)
     if action.enabled == false then
         return true
@@ -398,10 +400,7 @@ end
 -- the action again.  The method also lets us set the interval to zero
 -- so that the event will invoke the action regardless of time.
 --
--- @param actionToFind The action to modify.  This must either be
--- something acceptable to Luvent:addAction() or it must be the ID
--- that Luvent:addAction() returns for each action.  It is an error to
--- call this method on an action that does is not part of the event.
+-- @param actionToFind The action to modify or its ID.
 --
 -- @param interval An integer representing the new interval.
 --
@@ -415,10 +414,7 @@ Luvent.setActionInterval = createActionSetter("interval", "number")
 -- one.  It is safe to call this method on an action that has no
 -- interval to begin with.
 --
--- @param actionToFind The action to modify.  This must either be
--- something acceptable to Luvent:addAction() or it must be the ID
--- that Luvent:addAction() returns for each action.  It is an error to
--- call this method on an action that does is not part of the event.
+-- @param actionToFind The action to modify or its ID.
 --
 -- @class function
 -- @name Luvent:removeActionInterval
@@ -432,10 +428,7 @@ Luvent.removeActionInterval = createActionSetter("interval", "number", 0)
 -- actions share the same priority then there is no guarantee about
 -- the order in which Luvent will invoke them.
 --
--- @param actionToFind The action to modify.  This must either be
--- something acceptable to Luvent:addAction() or it must be the ID
--- that Luvent:addAction() returns for each action.  It is an error to
--- call this method on an action that does is not part of the event.
+-- @param actionToFind The action to modify or its ID.
 --
 -- @param priority A non-negative integer representing the priority.
 --
@@ -448,10 +441,7 @@ Luvent.setActionPriority = createActionSetter("priority", "number")
 -- This method will get rid of the action's priority setting, meaning
 -- that it will be pushed down to the bottom of the list of actions.
 --
--- @param actionToFind The action to modify.  This must either be
--- something acceptable to Luvent:addAction() or it must be the ID
--- that Luvent:addAction() returns for each action.  It is an error to
--- call this method on an action that does is not part of the event.
+-- @param actionToFind The action to modify or its ID.
 --
 -- @class function
 -- @name Luvent:removeActionPriority
@@ -463,8 +453,7 @@ Luvent.removeActionPriority = createActionSetter("priority", "number", 0)
 -- call the action.  Luvent enables all actions by default, so this
 -- method is meant primarily for re-enabling disabled actions.
 --
--- @param actionToFind The action to enable.  This must either be an
--- action ID or something acceptable to the Luvent:addAction() method.
+-- @param actionToFind The action to enable or its ID.
 --
 -- @see Luvent:disableAction
 --
@@ -478,8 +467,7 @@ Luvent.enableAction = createActionSetter("enabled", "boolean", true)
 -- not invoke the action.  This allows us to temporarily stop using an
 -- action without removing it from the event.
 --
--- @param actionToFind The action to disable.  This must either be an
--- action ID or something acceptable to the Luvent:addAction() method.
+-- @param actionToFind The action to disable or its ID.
 --
 -- @see Luvent:enableAction
 --
@@ -489,8 +477,7 @@ Luvent.disableAction = createActionSetter("enabled", "boolean", false)
 
 --- Determine if an action is enabled or not.
 --
--- @param actionToFind The action to check.  This must either be an
--- action ID or something acceptable to the Luvent:addAction() method.
+-- @param actionToFind The action to check or its ID.
 --
 -- @return Boolean true if the action is enabled and false if the
 -- action is disabled.
@@ -508,8 +495,7 @@ end
 -- the limit on the event that calls this method, even if multiple
 -- events share the action.
 --
--- @param actionToFind The action to modify.  This must either be an
--- action ID or something acceptable to the Luvent:addAction() method.
+-- @param actionToFind The action to modify or its ID.
 --
 -- @param limit A non-negative integer representing the maximum number
 -- of times the invoke the action.  If the value is zero then Luvent
@@ -531,8 +517,7 @@ end
 -- This method gets rid of any limit placed on an action.  If the
 -- action is disabled then this method will re-enable it.
 --
--- @param actionToFind The action to modify.  This must either be an
--- action ID or something acceptable to the Luvent:addAction() method.
+-- @param actionToFind The action to modify or its ID.
 --
 -- @see Luvent:setActionTriggerLimit
 function Luvent:removeActionTriggerLimit(actionToFind)
