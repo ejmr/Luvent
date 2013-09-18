@@ -8,14 +8,14 @@ Whenever you trigger an event the library will execute all functions
 attached to that event.  You may trigger an event multiple times and
 can provide different arguments to that event’s functions each time.
 
-There exists some great alternatives to Luvent, as you will see listed
-below.  However, most of those libraries do not have an explicit
-license.  I created Luvent to use in a commercial game, built on the
-[LÖVE][] framework, and so I could not use any library that did not
-explicitly grant legal permission to use the code in that situation.
-Luvent may not be that different from existing libraries in terms of
-its functionality; but it is and will always be free for developers to
-use in any program whether it is commercial or not.
+There are great alternatives to Luvent listed below.  However, most of
+those libraries do not have an explicit license.  I created Luvent to
+use in a commercial game, built on the [LÖVE][] framework, and so I
+could not use any library that did not explicitly grant legal
+permission to use the code in that situation.  Luvent may not be that
+different from existing libraries in terms of its functionality; but
+it is and will always be free for developers to use in any program
+whether it is commercial or not.
 
 
 Requirements
@@ -36,17 +36,25 @@ The following programs are not necessary in order to use Luvent but
 you will need them to run the unit tests, generate API documentation,
 and so on.
 
-* [LDoc][]
-* [Busted][]
+* [LDoc][] >= 1.4.0
+* [Busted][] >= 1.9.2
+* [GNU Make][] >= 3
+
+**Note:** That version of Busted is not yet available.  The Luvent
+  test suite uses [a recent feature][busted-exclude] which should be
+  part of the soon-upcoming version.
 
 
 Installation
 ------------
 
-All you need to do is place `src/Luvent.lua` in a directory that is part of
-`package.path` so that Lua can find and load it.  If you have Busted
-then you should run `make tests` first to ensure that Luvent behaves
-as intended.
+All you need to do is place `src/Luvent.lua` in a directory that is
+part of `package.path` so that Lua can find and load it.  Since the
+entire library is that one file you can also simply copy
+`src/Luvent.lua` into the directory alongside the rest of your code
+and `require()` it from there.  If you have Busted then you can run
+`make tests` first to ensure that Luvent behaves as intended; although
+see the note above about the version of Busted that Luvent uses.
 
 
 Documentation
@@ -82,9 +90,9 @@ with HTML documents that describe Luvent’s API.
 ### Basic Example ###
 
 You create new events with the `newEvent()` function. Note well that
-must *never* rely on the properties of the event objects.  Anything
-that is not a method is not part of the API and may change at any
-time.
+you must *never* rely on the properties of the event objects.
+Anything that is not a method is not part of the API and may change at
+any time.
 
 Once you have an event object you can begin to add ‘actions’ to it via
 its `addAction()` method.  To invoke those actions you ‘trigger’ the
@@ -174,6 +182,28 @@ print(#Enemy.LIVING)    -- Prints "0"
 
 **Note:** Luvent discards all return values from action functions or
 anything that coroutines yield.
+
+### Getting Information About Actions ###
+
+Luvent provides two methods for gathering information about the
+relationship between an event an actions.
+
+1. The method `getActionCount()` tells you the number of actions
+   associated with an event.  *This is not necessarily the number of
+   actions that `trigger()` will invoke.* The method only tells you
+   the number of unique actions associated with the event via its
+   `addAction()` method.  Luvent allows you to temporarily disable
+   actions and to delay their execution, which means `trigger()` will
+   not call those actions even though they are still associated with
+   the event.  That is why you cannot rely on `getActionCount()` to
+   tell you the exact number of actions an event will run.
+
+2. The method `hasAction(action_or_id)` accepts an action or an action
+   ID (i.e. the return value of `addAction()`) and returns a boolean
+   indicating whether or not the action is part of the event.
+   However, if `hasAction()` returns true that is not a guarantee that
+   the event will call that action, for the same reasons that affect
+   `getActionCount()`.
 
 ### Enabling and Disabling Actions ###
 
@@ -393,3 +423,5 @@ Copyright 2013 Eric James Michael Ritz
 [coroutine]: http://www.lua.org/manual/5.2/manual.html#2.6
 [metamethod]: http://www.lua.org/manual/5.2/manual.html#2.4
 [LÖVE]: http://love2d.org/
+[busted-exclude]: https://github.com/Olivine-Labs/busted/commit/fea4429befd11c8cb6492889495c80ff9fafdb59
+[GNU Make]: https://www.gnu.org/software/make/
