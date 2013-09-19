@@ -110,7 +110,7 @@ and triggering events, and adding and removing actions.
 --
 --     https://github.com/kikito/middleclass
 --
-require "middleclass"
+local class = require "middleclass"
 
 local Luvent = require "Luvent"
 local Enemy = class("Enemy")
