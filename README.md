@@ -37,12 +37,8 @@ you will need them to run the unit tests, generate API documentation,
 and so on.
 
 * [LDoc][] >= 1.4.0
-* [Busted][] >= 1.9.2
+* [Busted][] >= 1.10.0
 * [GNU Make][] >= 3
-
-**Note:** That version of Busted is not yet available.  The Luvent
-  test suite uses [a recent feature][busted-exclude] which should be
-  part of the soon-upcoming version.
 
 
 Installation
@@ -423,5 +419,4 @@ Copyright 2013 Eric James Michael Ritz
 [coroutine]: http://www.lua.org/manual/5.2/manual.html#2.6
 [metamethod]: http://www.lua.org/manual/5.2/manual.html#2.4
 [LÖVE]: http://love2d.org/
-[busted-exclude]: https://github.com/Olivine-Labs/busted/commit/fea4429befd11c8cb6492889495c80ff9fafdb59
 [GNU Make]: https://www.gnu.org/software/make/
