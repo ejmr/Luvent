@@ -49,8 +49,7 @@ part of `package.path` so that Lua can find and load it.  Since the
 entire library is that one file you can also simply copy
 `src/Luvent.lua` into the directory alongside the rest of your code
 and `require()` it from there.  If you have Busted then you can run
-`make tests` first to ensure that Luvent behaves as intended; although
-see the note above about the version of Busted that Luvent uses.
+`make tests` first to ensure that Luvent behaves as intended.
 
 
 Documentation
