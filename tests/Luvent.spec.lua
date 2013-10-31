@@ -469,11 +469,6 @@ describe("Action priorities", function ()
         end)
     end)
 
-    it("Calls actions in the order they are added by default", function ()
-        event:trigger()
-        assert.are.same(ticks, {"A", "B", "C"})
-    end)
-
     it("Requires priorities to be non-negative integers", function ()
         assert.is.error(function () event:setActionPriority(addA, -1) end)
         assert.is.error(function () event:setActionPriority(addA, "10") end)
