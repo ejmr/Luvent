@@ -26,7 +26,7 @@ function Luvent.newEvent()
     --
     -- @see newAction
     event.actions = {}
-    
+
     return setmetatable(event, Luvent)
 end
 
@@ -206,7 +206,7 @@ local function findAction(event, actionToFind)
             return true, index
         end
     end
-    
+
     return false, nil
 end
 
@@ -342,7 +342,7 @@ function Luvent:trigger(...)
     end
 
     sortActionsByPriority(self)
-        
+
     for _,action in ipairs(self.actions) do
         if action.interval > 0 then
             if os.difftime(os.time(), action.timeOfLastInvocation) >= action.interval then

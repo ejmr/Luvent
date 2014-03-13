@@ -106,7 +106,7 @@ describe("Basic action management", function ()
             event:removeAllActions()
             assert.are.equal(event:getActionCount(), 0)
         end)
-        
+
     end)
 
     describe("Getting information about actions", function ()
@@ -118,7 +118,7 @@ describe("Basic action management", function ()
             assert.True(event:hasAction(sort))
             assert.False(event:hasAction(echo))
         end)
-    
+
     end)
 
     describe("Disabling and re-enabling actions", function ()
@@ -146,10 +146,10 @@ describe("Basic action management", function ()
             event:addAction(noop)
             event:addAction(echo)
             assert.are.equal(event:getActionCount(), 2)
-            
+
             event:disableAction(noop)
             assert.are.equal(event:getActionCount(), 2)
-            
+
             event:enableAction(noop)
             assert.are.equal(event:getActionCount(), 2)
         end)
@@ -225,7 +225,7 @@ describe("Basic action management", function ()
 
             event1:addAction(noop)
             event2:addAction(noop)
-            
+
             event1:setActionTriggerLimit(noop, 10)
 
             for i = 1, 10 do
@@ -245,7 +245,7 @@ describe("Triggering events", function ()
 
     local onClickEvent
     local button
-    local bumpCounter 
+    local bumpCounter
     local updateLabel
 
     setup(function ()
@@ -269,7 +269,7 @@ describe("Triggering events", function ()
 
     it("Calls actions that take no arguments", function ()
         local noop = spy.new(function () end)
-        
+
         onClickEvent:addAction(noop)
         onClickEvent:trigger()
         assert.spy(noop).was.called()
@@ -298,7 +298,7 @@ describe("Triggering events", function ()
 
         onClickEvent:addAction(bump)
         onClickEvent:addAction(update)
-        onClickEvent:trigger(button)    
+        onClickEvent:trigger(button)
         onClickEvent:trigger(button)
         onClickEvent:trigger(button)
 
@@ -356,7 +356,7 @@ describe("Controlling time between actions #delay", function ()
     it("Calls an action only after so many seconds", function ()
         local id = event:addAction(bumpTicks)
         event:setActionInterval(id, 1)
-        
+
         while (os.time() - startTime) < 3 do
             event:trigger()
         end
@@ -371,7 +371,7 @@ describe("Controlling time between actions #delay", function ()
         local id2 = event:addAction(bumpTicks)
 
         event:setActionInterval(id2, 10)
-        
+
         assert.are.equal(event:getActionCount(), 2)
 
         -- We trigger the event but ten seconds will not pass.  So we
