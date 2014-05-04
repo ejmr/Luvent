@@ -404,7 +404,7 @@ License
 
 [The MIT License](http://opensource.org/licenses/MIT)
 
-Copyright 2013 Eric James Michael Ritz
+Copyright 2013–2014 Eric James Michael Ritz
 
 
 
