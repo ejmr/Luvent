@@ -7,10 +7,10 @@ describe("Initialization", function ()
         assert.are.equal(getmetatable(event), Luvent)
     end)
 
-    it("Does not allow changing the metatable", function ()
+    it("Does allow changing the metatable", function ()
         local event = Luvent.newEvent()
-        assert.has.errors(function ()
-            setmetatable(event, {})
+        assert.has_no.errors(function ()
+                setmetatable(event, { __index = function () print("Test") end })
         end)
     end)
 
