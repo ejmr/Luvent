@@ -357,7 +357,7 @@ describe("Controlling time between actions #delay", function ()
         local id = event:addAction(bumpTicks)
         event:setActionInterval(id, 1)
 
-        while (os.time() - startTime) < 3 do
+        while (os.time() - startTime) < 3.5 do
             event:trigger()
         end
 
