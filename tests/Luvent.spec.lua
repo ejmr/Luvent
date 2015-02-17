@@ -499,3 +499,85 @@ describe("Action priorities", function ()
     end)
 
 end)
+
+describe("Iteration over actions", function ()
+
+    local event
+    local noop
+    local echo
+
+    before_each(function ()
+        event = Luvent.newEvent()
+        noop = spy.new(function () end)
+        echo = spy.new(function (...) return ... end)
+
+        event:addAction(noop)
+        event:addAction(echo)
+    end)
+
+    describe("allActions()", function ()
+
+        it("Allows disabling and re-enabling all actions", function ()
+            for action in event:allActions() do
+                event:disableAction(action)
+            end
+
+            event:trigger()
+            assert.spy(noop).was_not_called()
+            assert.spy(echo).was_not_called()
+
+            for action in event:allActions() do
+                event:enableAction(action)
+            end
+
+            event:trigger()
+            assert.spy(noop).was_called(1)
+            assert.spy(echo).was_called(1)
+        end)
+
+        it("Allows setting trigger limits", function ()
+            local triggerEventThreeTimes = function ()
+                event:trigger()
+                event:trigger()
+                event:trigger()
+            end
+
+            for action in event:allActions() do
+                event:setActionTriggerLimit(action, 1)
+            end
+
+            triggerEventThreeTimes()
+            assert.spy(noop).was_called(1)
+            assert.spy(echo).was_called(1)
+
+            for action in event:allActions() do
+                event:removeActionTriggerLimit(action)
+            end
+
+            triggerEventThreeTimes()
+            assert.spy(noop).was_called(4) -- Including the one call above.
+            assert.spy(echo).was_called(4)
+        end)
+
+        it("Forbids removing actions during iteration", function ()
+            assert.has.errors(function ()
+                for action in events:allActions() do
+                    event:removeAction(action)
+                end
+            end)
+        end)
+
+    end)
+
+    describe("forEachAction()", function ()
+
+        it("Calls a function once on each action", function ()
+            event:forEachAction(Luvent.disableAction)
+            event:trigger()
+            assert.spy(noop).was_not_called()
+            assert.spy(echo).was_not_called()
+        end)
+
+    end)
+
+end)

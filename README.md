@@ -360,6 +360,41 @@ only invoke the second action.  Once an action reaches its limit then
 Luvent effectively calls `removeAction()`, meaning you would have to
 manually re-add the action before the event would use it again.
 
+### Looping Over Actions ###
+
+The API provides two methods for looping through all of the actions
+associated with an event.  The first is `allActions()`.  It returns an
+iterator to use in a `for` loop, e.g.
+
+```lua
+-- Continuing the previous example, this loop temporarily disables all
+-- actions attached to the event.
+for action in Game.onDie:allActions() do
+    Game.onDie:disableAction(action)
+end
+```
+
+If you only need to call one function or method for each action, as in
+the above example, then you can use `forEachAction()`.  It accepts one
+argument, a function which is called once for each action.  That
+function receives two arguments per invocation:
+
+1. The Event object containing the actions.
+
+2. The ID of the current action.
+
+This requirement makes it possible to call a method for each action by
+passing that method to `forEachAction()`.  For example, you can
+rewrite the previous loop like so:
+
+```lua
+Game.onDie:forEachAction(Luvent.disableAction)
+```
+
+*It is an error to add or remove actions during iteration.*  You
+cannot call `addAction()`, `removeAction()`, or `removeAllActions()`
+during a loop using `allActions()` or via `forEachAction()`.
+
 ### Complete List of the Public API ###
 
 You create events with the function `Luvent.newEvent()`.  The function
@@ -380,6 +415,8 @@ returns an object with the following methods:
 * `removeActionTriggerLimit(action_or_id)`
 * `setActionInterval(action_or_id, integer)`
 * `removeActionInterval(action_or_id)`
+* `allActions()`
+* `forEachAction(callable)`
 
 
 Acknowledgments and Alternatives

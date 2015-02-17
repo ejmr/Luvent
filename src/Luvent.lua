@@ -528,4 +528,35 @@ function Luvent:removeActionTriggerLimit(actionToFind)
     self.actions[index].enabled = true
 end
 
+--- Returns an iterator for all actions.
+--
+-- This method returns a function that is an iterator for actions,
+-- providing a convenient way to write a for-loop over every action
+-- associated with an event.
+--
+-- Note that loops must not add or remove actions during traversal.
+-- Calling methods like addAction() or removeAction() while looping
+-- through actions is an error.
+function Luvent:allActions()
+    local index = 0
+    return function ()
+        index = index + 1
+        local action = self.actions[index]
+        if action then return action.id end
+    end
+end
+
+--- Calls a function once for each action.
+--
+-- @param f The function to call.  For each action this function will
+-- receive two arguments: the event object itself and an action ID.
+-- The order of actions is not stable.
+--
+-- @see Luvent:allActions
+function Luvent:forEachAction(f)
+    for action in self:allActions() do
+        f(self, action)
+    end
+end
+
 return Luvent
