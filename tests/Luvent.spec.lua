@@ -22,7 +22,7 @@ describe("Basic action management", function ()
 
     -- These are three actions.
     local noop = function () end
-    local echo = function (...) print(...) end
+    local echo = function (...) return ... end
     local sort = setmetatable({}, {
         __call = function (...)
             table.sort({ ... })
