@@ -374,11 +374,11 @@ returns an object with the following methods:
 * `isActionEnabled(action_or_id)`
 * `enableAction(action_or_id)`
 * `disableAction(action_or_id)`
-* `setActionPriority(action_or_id)`
+* `setActionPriority(action_or_id, integer)`
 * `removeActionPriority(action_or_id)`
-* `setActionTriggerLimit(action_or_id)`
+* `setActionTriggerLimit(action_or_id, integer)`
 * `removeActionTriggerLimit(action_or_id)`
-* `setActionInterval(action_or_id)`
+* `setActionInterval(action_or_id, integer)`
 * `removeActionInterval(action_or_id)`
 
 
