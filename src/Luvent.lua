@@ -2,7 +2,7 @@
 --
 -- For more information see: https://github.com/ejmr/Luvent
 --
--- @copyright 2013–2014 Eric James Michael Ritz
+-- @copyright 2013–2015 Eric James Michael Ritz
 -- @class module
 -- @name Luvent
 local Luvent = {}
