@@ -241,6 +241,33 @@ describe("Basic action management", function ()
 
 end)
 
+describe("Action getters", function ()
+
+    local event
+    local noop = function () end
+
+    before_each(function ()
+        event = Luvent.newEvent()
+        event:addAction(noop)
+        event:setActionTriggerLimit(noop, 10)
+        event:setActionInterval(noop, 3)
+        event:setActionPriority(noop, 5)
+    end)
+
+    it("Can get the action limit", function ()
+        assert.are.equal(event:getActionTriggerLimit(noop), 10)
+    end)
+
+    it("Can get the action interval", function ()
+        assert.are.equal(event:getActionInterval(noop), 3)
+    end)
+
+    it("Can get the action priority", function ()
+        assert.are.equal(event:getActionPriority(noop), 5)
+    end)
+
+end)
+
 describe("Triggering events", function ()
 
     local onClickEvent

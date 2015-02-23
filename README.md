@@ -360,6 +360,19 @@ only invoke the second action.  Once an action reaches its limit then
 Luvent effectively calls `removeAction()`, meaning you would have to
 manually re-add the action before the event would use it again.
 
+### Getters ###
+
+Luvent gives you three getters for obtaining information about
+actions:
+
+1. `getActionTriggerLimit(action_or_id)`
+2. `getActionInterval(action_or_id)`
+3. `getActionPriority(action_or_id)`
+
+This methods complement the setters above and help you gain insight
+into the behavior of an action, e.g. how many times it will be
+triggered before being disabled.
+
 ### Looping Over Actions ###
 
 The API provides two methods for looping through all of the actions
@@ -417,6 +430,9 @@ returns an object with the following methods:
 * `removeActionInterval(action_or_id)`
 * `allActions()`
 * `forEachAction(callable)`
+* `getActionTriggerLimit(action_or_id)`
+* `getActionInterval(action_or_id)`
+* `getActionPriority(action_or_id)`
 
 
 Acknowledgments and Alternatives

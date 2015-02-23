@@ -218,9 +218,9 @@ end
 -- @param event The event with the actions we sort.
 local function sortActionsByPriority(event)
     table.sort(event.actions,
-        function (a1, a2)
-            return a1.priority > a2.priority
-        end)
+               function (a1, a2)
+                   return a1.priority > a2.priority
+    end)
 end
 
 --- Add an action to an event.
@@ -393,6 +393,28 @@ local function createActionSetter(property, valueType, default)
     end
 end
 
+--- Creates an action getter method.
+--
+-- This utility returns a function that creates a getter
+-- for the given property name.
+--
+-- @param property The action property to return from the getter.
+--
+-- @return A method of two arguments: an event and an action (or id).
+-- It will return the property given above for that action.
+--
+-- @see Luvent:getActionInterval
+-- @see Luvent:getActionTriggerLimit
+-- @see Luvent:getActionPriority
+local function createActionGetter(property)
+    return function (event, action)
+        local exists,index = findAction(event, action)
+        assert(exists)
+        assert(event.actions[index][property])
+        return event.actions[index][property]
+    end
+end
+
 --- Modify the interval of an action.
 --
 -- This method lets us change an action to adhere to an interval, i.e.
@@ -407,6 +429,16 @@ end
 -- @class function
 -- @name Luvent:setActionInterval
 Luvent.setActionInterval = createActionSetter("interval", "number")
+
+--- Gets the interval for an action.
+--
+-- @param actionToFind The action whose interval to find.
+--
+-- @return The interval as a number.
+--
+-- @class function
+-- @name Luvent:getActionInterval
+Luvent.getActionInterval = createActionGetter("interval")
 
 --- Remove the interval of an action.
 --
@@ -435,6 +467,16 @@ Luvent.removeActionInterval = createActionSetter("interval", "number", 0)
 -- @class function
 -- @name Luvent:setActionPriority
 Luvent.setActionPriority = createActionSetter("priority", "number")
+
+--- Get the priority for an action.
+--
+-- @param actionToFind The action whose priority to return.
+--
+-- @return The action's priority as a number.
+--
+-- @class function
+-- @name Luvent:getActionPriority
+Luvent.getActionPriority = createActionGetter("priority")
 
 --- Remove the priority of an action.
 --
@@ -510,6 +552,18 @@ function Luvent:setActionTriggerLimit(actionToFind, limit)
     if limit == 0 then
         self.actions[index].enabled = false
     end
+end
+
+--- Gets the trigger limit for an action.
+--
+-- @param actionToFind The action whose limit to return.
+--
+-- @return The trigger limit as a number.
+function Luvent:getActionTriggerLimit(actionToFind)
+    local exists,index = findAction(self, actionToFind)
+    assert(exists)
+    assert(self.actions[index].limit)
+    return self.actions[index].limit
 end
 
 --- Remove any limit on an action.

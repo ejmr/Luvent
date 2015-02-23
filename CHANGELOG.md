@@ -5,6 +5,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [v1.2.0] - 2015-02-23
+
+### Added
+
+- Getters for various action properties.
+
+
 ## [v1.1.0] - 2015-02-17
 
 ### Added
@@ -36,6 +43,7 @@ First public release.
 
 
 
+[v1.2.0]: https://github.com/ejmr/Luvent/releases/tag/v1.2.0
 [v1.1.0]: https://github.com/ejmr/Luvent/releases/tag/v1.1.0
 [v1.0.0]: https://github.com/ejmr/Luvent/releases/tag/v1.0.0
 [busted]: http://olivinelabs.com/busted/
