@@ -379,17 +379,17 @@ end
 -- @see Luvent:enableAction
 local function createActionSetter(property, valueType, default)
     return function (event, actionToFind, newValue)
-        local newValue = newValue or default
-        local newValueType = type(newValue)
+        local propertyValue = newValue or default
+        local propertyValueType = type(propertyValue)
         local exists,index = findAction(event, actionToFind)
         assert(exists)
-        assert(newValueType == valueType)
+        assert(propertyValueType == valueType)
 
-        if newValueType == "number" then
-            assert(newValue >= 0)
+        if propertyValueType == "number" then
+            assert(propertyValue >= 0)
         end
 
-        event.actions[index][property] = newValue
+        event.actions[index][property] = propertyValue
     end
 end
 
