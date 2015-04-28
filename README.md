@@ -39,6 +39,7 @@ and so on.
 * [LDoc][] >= 1.4.0
 * [Busted][] >= 1.10.0
 * [GNU Make][] >= 3
+* [Luacheck][] >= 0.10.0
 
 
 Installation
@@ -472,3 +473,4 @@ Copyright 2013–2015 Eric James Michael Ritz
 [metamethod]: http://www.lua.org/manual/5.2/manual.html#2.4
 [LÖVE]: http://love2d.org/
 [GNU Make]: https://www.gnu.org/software/make/
+[Luacheck]: https://github.com/mpeterv/luacheck

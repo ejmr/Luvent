@@ -13,7 +13,7 @@ docs:
 	if test -f "luadoc.css"; then rm "luadoc.css"; fi
 
 tests:
-	luacheck ./src/Luvent.lua
+	luacheck ./src/Luvent.lua && \
 	busted --pattern=".spec.lua" ./tests
 
 # Currently we only create a list of tags suitable for GNU Emacs.
