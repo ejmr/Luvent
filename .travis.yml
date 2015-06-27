@@ -1,0 +1,28 @@
+language: lua
+
+sudo: required
+
+env:
+  LUA=luajit
+
+branches:
+  only:
+    - master
+
+before_install:
+  - sudo apt-get install luajit
+  - sudo apt-get install luarocks
+  - sudo luarocks install luafilesystem
+  - sudo luarocks install luacheck
+  - sudo luarocks install busted
+
+script:
+  - luacheck src/Luvent.lua
+  - busted --pattern=".spec.lua" tests/Luvent.spec.lua
+
+notifications:
+  email:
+    recipients:
+      - ejmr@plutono.com
+    on_success: change
+    on_failure: always
