@@ -1,6 +1,8 @@
 Luvent: A Simple Event Library for Lua
 ======================================
 
+[![Travis-CI-Badge][]][Travis-CI]
+
 Luvent is a library for [Lua][], written entirely in Lua, which helps
 support [event-driven programming][EDP].  Luvent lets you create
 events, which are objects with any number of associated functions.
@@ -474,3 +476,5 @@ Copyright 2013–2015 Eric James Michael Ritz
 [LÖVE]: http://love2d.org/
 [GNU Make]: https://www.gnu.org/software/make/
 [Luacheck]: https://github.com/mpeterv/luacheck
+[Travis-CI-Badge]: https://travis-ci.org/ejmr/Luvent.svg
+[Travis-CI]: https://travis-ci.org/ejmr/Luvent
